@@ -27,6 +27,8 @@ export interface CulturaResponse {
   status: string;
   dataPlantio: string;
   previsaoColheita: string | null;
+  icone: string | null;
+  progress: number;
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +40,8 @@ export interface CulturaRequest {
   status?: string;
   dataPlantio: string;
   previsaoColheita?: string;
+  icone?: string;
+  progress?: number;
 }
 
 export interface TarefaResponse {
@@ -70,6 +74,7 @@ export interface PrecoMercadoResponse {
   unidade: string;
   variacao: number | null;
   dataAtualizacao: string;
+  userId?: number;
 }
 
 export interface PrecoMercadoRequest {
@@ -256,6 +261,20 @@ export const api = {
         body: JSON.stringify(data),
       });
       return response.json();
+    },
+
+    update: async (id: number, data: PrecoMercadoRequest): Promise<PrecoMercadoResponse> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/precos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+      await authenticatedFetch(`${API_BASE_URL}/api/precos/${id}`, {
+        method: 'DELETE',
+      });
     },
   },
 

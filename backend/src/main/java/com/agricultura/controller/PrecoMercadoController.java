@@ -1,6 +1,7 @@
 package com.agricultura.controller;
 
 import com.agricultura.dto.*;
+import com.agricultura.service.AuthService;
 import com.agricultura.service.PrecoMercadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +16,36 @@ import java.util.List;
 public class PrecoMercadoController {
 
     private final PrecoMercadoService precoMercadoService;
+    private final AuthService authService;
 
     @GetMapping
     public ResponseEntity<List<PrecoMercadoResponse>> findAll() {
-        return ResponseEntity.ok(precoMercadoService.findAll());
+        Long userId = authService.getCurrentUser().getId();
+        return ResponseEntity.ok(precoMercadoService.findAll(userId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PrecoMercadoResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(precoMercadoService.findById(id));
+        Long userId = authService.getCurrentUser().getId();
+        return ResponseEntity.ok(precoMercadoService.findById(id, userId));
     }
 
     @PostMapping
     public ResponseEntity<PrecoMercadoResponse> create(@Valid @RequestBody PrecoMercadoRequest request) {
-        return ResponseEntity.ok(precoMercadoService.create(request));
+        Long userId = authService.getCurrentUser().getId();
+        return ResponseEntity.ok(precoMercadoService.create(request, userId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PrecoMercadoResponse> update(@PathVariable Long id, @Valid @RequestBody PrecoMercadoRequest request) {
+        Long userId = authService.getCurrentUser().getId();
+        return ResponseEntity.ok(precoMercadoService.update(id, request, userId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Long userId = authService.getCurrentUser().getId();
+        precoMercadoService.delete(id, userId);
+        return ResponseEntity.noContent().build();
     }
 }

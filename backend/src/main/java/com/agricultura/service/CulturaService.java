@@ -1,9 +1,11 @@
 package com.agricultura.service;
 
 import com.agricultura.domain.Cultura;
+import com.agricultura.domain.Usuario;
 import com.agricultura.dto.CulturaRequest;
 import com.agricultura.dto.CulturaResponse;
 import com.agricultura.repository.CulturaRepository;
+import com.agricultura.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class CulturaService {
 
     private final CulturaRepository culturaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public List<CulturaResponse> findAll(Long userId) {
@@ -38,16 +41,19 @@ public class CulturaService {
 
     @Transactional
     public CulturaResponse create(CulturaRequest request, Long userId) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
         Cultura cultura = Cultura.builder()
                 .nome(request.getNome())
                 .area(request.getArea())
                 .status(request.getStatus() != null ? request.getStatus() : "PLANTADO")
                 .dataPlantio(request.getDataPlantio())
                 .previsaoColheita(request.getPrevisaoColheita())
+                .icone(request.getIcone())
+                .progress(request.getProgress() != null ? request.getProgress() : 0)
+                .user(usuario)
                 .build();
-        
-        cultura.setUser(new com.agricultura.domain.Usuario());
-        cultura.getUser().setId(userId);
         
         cultura = culturaRepository.save(cultura);
         
@@ -70,6 +76,12 @@ public class CulturaService {
         }
         cultura.setDataPlantio(request.getDataPlantio());
         cultura.setPrevisaoColheita(request.getPrevisaoColheita());
+        if (request.getIcone() != null) {
+            cultura.setIcone(request.getIcone());
+        }
+        if (request.getProgress() != null) {
+            cultura.setProgress(request.getProgress());
+        }
         
         cultura = culturaRepository.save(cultura);
         
@@ -96,6 +108,8 @@ public class CulturaService {
                 .status(cultura.getStatus())
                 .dataPlantio(cultura.getDataPlantio())
                 .previsaoColheita(cultura.getPrevisaoColheita())
+                .icone(cultura.getIcone())
+                .progress(cultura.getProgress())
                 .userId(cultura.getUser().getId())
                 .createdAt(cultura.getCreatedAt())
                 .updatedAt(cultura.getUpdatedAt())

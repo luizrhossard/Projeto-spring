@@ -18,4 +18,5 @@ public class PrecoMercadoResponse {
     private String unidade;
     private BigDecimal variacao;
     private LocalDateTime dataAtualizacao;
+    private Long userId;
 }

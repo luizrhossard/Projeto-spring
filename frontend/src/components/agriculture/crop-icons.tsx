@@ -369,38 +369,167 @@ export function TrigoIcon({ className }: CropIconProps) {
   )
 }
 
+// Abacaxi Icon
+export function AbacaxiIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#abacaxi-gradient)" />
+      <path d="M24 36V28" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M20 30C20 30 24 26 28 30" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      <path d="M16 26C16 26 20 22 24 26" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <path d="M32 26C32 26 28 22 24 26" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <ellipse cx="24" cy="18" rx="6" ry="4" fill="#fbbf24" opacity="0.8" />
+      <path d="M18 16C18 16 20 14 24 14C28 14 30 16 30 16" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" />
+      <defs>
+        <linearGradient id="abacaxi-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#f59e0b" /><stop offset="1" stopColor="#b45309" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Banana Icon
+export function BananaIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#banana-gradient)" />
+      <path d="M14 32C14 32 18 20 28 14C32 11 36 12 36 12" stroke="white" strokeWidth="3" strokeLinecap="round" />
+      <path d="M16 30C16 30 20 22 28 16" stroke="#fef3c7" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      <path d="M18 28C18 28 22 20 28 16" stroke="#fde68a" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+      <defs>
+        <linearGradient id="banana-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#fbbf24" /><stop offset="1" stopColor="#d97706" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Laranja Icon
+export function LaranjaIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="18" fill="#f97316" />
+      <circle cx="24" cy="24" r="16" fill="url(#laranja-gradient)" />
+      <path d="M24 14V24" stroke="#166534" strokeWidth="2" strokeLinecap="round" />
+      <path d="M24 14C24 14 20 16 20 20" stroke="#166534" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M24 14C24 14 28 16 28 20" stroke="#166534" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="24" cy="22" r="2" fill="#15803d" opacity="0.6" />
+      <defs>
+        <linearGradient id="laranja-gradient" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#fb923c" /><stop offset="1" stopColor="#ea580c" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Manga Icon
+export function MangaIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#manga-gradient)" />
+      <path d="M24 36C24 36 18 28 18 20C18 12 22 10 24 10C26 10 30 12 30 20C30 28 24 36 24 36Z" fill="#fbbf24" stroke="white" strokeWidth="1.5" />
+      <path d="M24 12L24 26" stroke="#166534" strokeWidth="2" strokeLinecap="round" />
+      <path d="M20 18L24 14L28 18" stroke="#166534" strokeWidth="1.5" strokeLinecap="round" />
+      <defs>
+        <linearGradient id="manga-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#f59e0b" /><stop offset="1" stopColor="#dc2626" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Uva Icon
+export function UvaIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#uva-gradient)" />
+      <circle cx="20" cy="22" r="5" fill="#7c3aed" stroke="white" strokeWidth="1" />
+      <circle cx="28" cy="22" r="5" fill="#8b5cf6" stroke="white" strokeWidth="1" />
+      <circle cx="24" cy="28" r="5" fill="#6d28d9" stroke="white" strokeWidth="1" />
+      <circle cx="18" cy="28" r="4" fill="#7c3aed" stroke="white" strokeWidth="1" />
+      <circle cx="30" cy="28" r="4" fill="#8b5cf6" stroke="white" strokeWidth="1" />
+      <path d="M24 14V18" stroke="#166534" strokeWidth="2" strokeLinecap="round" />
+      <path d="M24 14C24 14 20 16 18 14" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M24 14C24 14 28 16 30 14" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" />
+      <defs>
+        <linearGradient id="uva-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#a855f7" /><stop offset="1" stopColor="#6b21a8" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Melancia Icon
+export function MelanciaIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#melancia-gradient)" />
+      <path d="M12 24C12 24 16 16 24 16C32 16 36 24 36 24C36 24 32 32 24 32C16 32 12 24 12 24Z" fill="#22c55e" stroke="white" strokeWidth="1.5" />
+      <path d="M16 24C16 24 20 20 24 24C28 20 32 24 32 24" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+      <path d="M18 24C18 24 22 22 24 24" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <path d="M26 24C26 24 28 22 30 24" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <defs>
+        <linearGradient id="melancia-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#ef4444" /><stop offset="1" stopColor="#b91c1c" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Tomate Icon
+export function TomateIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="26" r="16" fill="url(#tomate-gradient)" />
+      <path d="M24 10V18" stroke="#15803d" strokeWidth="3" strokeLinecap="round" />
+      <path d="M20 12L24 18L28 12" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <ellipse cx="24" cy="18" rx="4" ry="3" fill="#15803d" />
+      <path d="M20 20C20 20 22 18 24 20" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <defs>
+        <linearGradient id="tomate-gradient" x1="8" y1="10" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#ef4444" /><stop offset="1" stopColor="#b91c1c" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Batata Icon
+export function BatataIcon({ className }: CropIconProps) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
+      <circle cx="24" cy="24" r="20" fill="url(#batata-gradient)" />
+      <ellipse cx="24" cy="26" rx="14" ry="10" fill="#a16207" />
+      <circle cx="18" cy="22" r="1.5" fill="#78350f" opacity="0.5" />
+      <circle cx="28" cy="24" r="1.5" fill="#78350f" opacity="0.5" />
+      <circle cx="22" cy="28" r="1.5" fill="#78350f" opacity="0.5" />
+      <circle cx="30" cy="28" r="1.5" fill="#78350f" opacity="0.5" />
+      <defs>
+        <linearGradient id="batata-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#d97706" /><stop offset="1" stopColor="#92400e" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
 // Generic Crop Icon for fallback
 export function GenericCropIcon({ className }: CropIconProps) {
   return (
-    <svg
-      viewBox="0 0 48 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn("w-8 h-8", className)}
-    >
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("w-8 h-8", className)}>
       <circle cx="24" cy="24" r="20" fill="url(#generic-gradient)" />
-      <path
-        d="M24 36V24"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M24 24C24 24 18 20 18 16C18 12 21 10 24 10C27 10 30 12 30 16C30 20 24 24 24 24Z"
-        fill="white"
-        opacity="0.9"
-      />
-      <path
-        d="M16 28C16 28 20 24 24 28C28 24 32 28 32 28"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
+      <path d="M24 36V24" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M24 24C24 24 18 20 18 16C18 12 21 10 24 10C27 10 30 12 30 16C30 20 24 24 24 24Z" fill="white" opacity="0.9" />
+      <path d="M16 28C16 28 20 24 24 28C28 24 32 28 32 28" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
       <defs>
         <linearGradient id="generic-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#22c55e" />
-          <stop offset="1" stopColor="#15803d" />
+          <stop stopColor="#22c55e" /><stop offset="1" stopColor="#15803d" />
         </linearGradient>
       </defs>
     </svg>

@@ -28,6 +28,7 @@ interface CropData {
   color: string
   gradient: string
   Icon: null
+  icone: string
 }
 
 interface TarefaData {
@@ -73,14 +74,15 @@ const mapCulturaToCropData = (cultura: CulturaResponse): CropData => {
     variety: cultura.nome,
     area: `${cultura.area} ha`,
     status: statusMap[cultura.status] || 'growing',
-    progress: Math.floor(Math.random() * 60) + 20,
+    progress: cultura.progress ?? 0,
     plantedDate: cultura.dataPlantio,
     harvestDate: cultura.previsaoColheita || '',
     health: 'good',
     irrigation: 'Automática',
     color: healthMap.good,
     gradient: gradientMap[cultura.status] || 'from-green-500 to-emerald-600',
-    Icon: null
+    Icon: null,
+    icone: cultura.icone || 'soja'
   }
 }
 
@@ -115,33 +117,6 @@ const mapPrecoToPrecoData = (preco: PrecoMercadoResponse): PrecoData => ({
   preco: preco.preco,
   variacao: preco.variacao
 })
-
-const defaultCulturas: CropData[] = [
-  { id: 1, name: 'Soja', variety: 'BRS 284', area: '120 ha', status: 'growing', progress: 65, plantedDate: '2024-09-15', harvestDate: '2025-02-15', health: 'good', irrigation: 'Automática', color: '#22c55e', gradient: 'from-green-500 to-emerald-600', Icon: null },
-  { id: 2, name: 'Milho', variety: 'Híbrido 2B587', area: '80 ha', status: 'growing', progress: 45, plantedDate: '2024-10-01', harvestDate: '2025-03-01', health: 'warning', irrigation: 'Manual', color: '#f59e0b', gradient: 'from-amber-400 to-orange-500', Icon: null },
-  { id: 3, name: 'Café', variety: 'Arábica', area: '150 ha', status: 'harvest', progress: 90, plantedDate: '2024-03-01', harvestDate: '2025-01-15', health: 'good', irrigation: 'Gotejamento', color: '#a16207', gradient: 'from-amber-600 to-yellow-700', Icon: null },
-  { id: 4, name: 'Feijão', variety: 'Carioca', area: '50 ha', status: 'planted', progress: 20, plantedDate: '2024-11-20', harvestDate: '2025-02-20', health: 'good', irrigation: 'Automática', color: '#b45309', gradient: 'from-orange-500 to-amber-600', Icon: null },
-  { id: 5, name: 'Algodão', variety: 'FM 966', area: '50 ha', status: 'growing', progress: 55, plantedDate: '2024-09-01', harvestDate: '2025-04-01', health: 'excellent', irrigation: 'Pivô Central', color: '#84cc16', gradient: 'from-lime-400 to-green-500', Icon: null },
-  { id: 6, name: 'Cana-de-Açúcar', variety: 'RB867515', area: '100 ha', status: 'growing', progress: 70, plantedDate: '2024-04-15', harvestDate: '2025-05-15', health: 'good', irrigation: 'Automática', color: '#4ade80', gradient: 'from-green-400 to-emerald-500', Icon: null }
-]
-
-const defaultTarefas: TarefaData[] = [
-  { id: 1, title: 'Irrigar lavoura de soja - Setor 3', description: 'Aplicar 15mm de água conforme planejamento', priority: 'high', status: 'pending', dueDate: '2025-01-12', assignedTo: 'João Pedro', location: 'Setor 3 - Soja', type: 'irrigation' },
-  { id: 2, title: 'Aplicar fertilizante NPK', description: 'Segunda aplicação de fertilizante no milho', priority: 'medium', status: 'pending', dueDate: '2025-01-13', assignedTo: 'Maria Santos', location: 'Setor 2 - Milho', type: 'fertilizer' },
-  { id: 3, title: 'Monitorar pragas - Área norte', description: 'Verificar presença de lagartas na soja', priority: 'high', status: 'in_progress', dueDate: '2025-01-12', assignedTo: 'Carlos Silva', location: 'Área Norte', type: 'monitoring' },
-  { id: 4, title: 'Colheita de café', description: 'Iniciar colheita mecanizada do setor 1', priority: 'high', status: 'pending', dueDate: '2025-01-15', assignedTo: 'Equipe Colheita', location: 'Setor 1 - Café', type: 'harvest' },
-  { id: 5, title: 'Manutenção equipamentos', description: 'Revisão do sistema de irrigação pivô central', priority: 'low', status: 'completed', dueDate: '2025-01-10', assignedTo: 'Pedro Técnico', location: 'Galpão Principal', type: 'maintenance' },
-  { id: 6, title: 'Amostragem de solo', description: 'Coletar amostras para análise de fertilidade', priority: 'medium', status: 'pending', dueDate: '2025-01-14', assignedTo: 'Ana Agrônoma', location: 'Setor 4 - Algodão', type: 'analysis' }
-]
-
-const defaultPrecos: PrecoData[] = [
-  { id: 1, produto: 'Soja', preco: 145.50, variacao: 2.35 },
-  { id: 2, produto: 'Milho', preco: 75.00, variacao: -1.20 },
-  { id: 3, produto: 'Café', preco: 685.00, variacao: 5.50 },
-  { id: 4, produto: 'Feijão', preco: 320.00, variacao: 3.80 },
-  { id: 5, produto: 'Algodão', preco: 185.00, variacao: 1.15 },
-  { id: 6, produto: 'Açúcar', preco: 135.00, variacao: -0.90 }
-]
 
 export default function Home() {
   const router = useRouter()
@@ -223,9 +198,9 @@ export default function Home() {
       )
     }
 
-    const culturasData = culturas.length > 0 ? culturas : defaultCulturas
-    const tarefasData = tarefas.length > 0 ? tarefas : defaultTarefas
-    const precosData = precos.length > 0 ? precos : defaultPrecos
+    const culturasData = culturas
+    const tarefasData = tarefas
+    const precosData = precos
 
     switch (activeSection) {
       case 'dashboard':

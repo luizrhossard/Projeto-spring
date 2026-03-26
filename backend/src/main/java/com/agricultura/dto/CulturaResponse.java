@@ -19,6 +19,8 @@ public class CulturaResponse {
     private String status;
     private LocalDate dataPlantio;
     private LocalDate previsaoColheita;
+    private String icone;
+    private Integer progress;
     private Long userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

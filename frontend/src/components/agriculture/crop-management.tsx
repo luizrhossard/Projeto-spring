@@ -41,6 +41,16 @@ import {
   FeijaoIcon,
   AlgodaoIcon,
   CanaIcon,
+  ArrozIcon,
+  TrigoIcon,
+  AbacaxiIcon,
+  BananaIcon,
+  LaranjaIcon,
+  MangaIcon,
+  UvaIcon,
+  MelanciaIcon,
+  TomateIcon,
+  BatataIcon,
   GenericCropIcon
 } from './crop-icons'
 import { Card3D, Progress3D } from './animations'
@@ -60,6 +70,7 @@ interface CropData {
   color: string
   gradient: string
   Icon: React.ComponentType<{ className?: string }> | null
+  icone?: string
 }
 
 interface CropManagementProps {
@@ -191,11 +202,57 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
   const [filter, setFilter] = useState('all')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedCrop, setSelectedCrop] = useState<CropData | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editedCultura, setEditedCultura] = useState<CulturaRequest | null>(null)
   const [novaCultura, setNovaCultura] = useState<CulturaRequest>({
     nome: '',
     area: 0,
-    dataPlantio: new Date().toISOString().split('T')[0]
+    dataPlantio: new Date().toISOString().split('T')[0],
+    icone: 'soja',
+    progress: 0
   })
+
+  const iconOptions = [
+    { value: 'soja', label: 'Soja', Icon: SojaIcon },
+    { value: 'milho', label: 'Milho', Icon: MilhoIcon },
+    { value: 'cafe', label: 'Café', Icon: CafeIcon },
+    { value: 'feijao', label: 'Feijão', Icon: FeijaoIcon },
+    { value: 'algodao', label: 'Algodão', Icon: AlgodaoIcon },
+    { value: 'cana', label: 'Cana', Icon: CanaIcon },
+    { value: 'arroz', label: 'Arroz', Icon: ArrozIcon },
+    { value: 'trigo', label: 'Trigo', Icon: TrigoIcon },
+    { value: 'abacaxi', label: 'Abacaxi', Icon: AbacaxiIcon },
+    { value: 'banana', label: 'Banana', Icon: BananaIcon },
+    { value: 'laranja', label: 'Laranja', Icon: LaranjaIcon },
+    { value: 'manga', label: 'Manga', Icon: MangaIcon },
+    { value: 'uva', label: 'Uva', Icon: UvaIcon },
+    { value: 'melancia', label: 'Melancia', Icon: MelanciaIcon },
+    { value: 'tomate', label: 'Tomate', Icon: TomateIcon },
+    { value: 'batata', label: 'Batata', Icon: BatataIcon },
+  ]
+
+  const getIconComponent = (iconName: string | null | undefined): React.ComponentType<{ className?: string }> => {
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+      'soja': SojaIcon,
+      'milho': MilhoIcon,
+      'cafe': CafeIcon,
+      'feijao': FeijaoIcon,
+      'algodao': AlgodaoIcon,
+      'cana': CanaIcon,
+      'arroz': ArrozIcon,
+      'trigo': TrigoIcon,
+      'abacaxi': AbacaxiIcon,
+      'banana': BananaIcon,
+      'laranja': LaranjaIcon,
+      'manga': MangaIcon,
+      'uva': UvaIcon,
+      'melancia': MelanciaIcon,
+      'tomate': TomateIcon,
+      'batata': BatataIcon,
+    }
+    return iconMap[iconName || ''] || GenericCropIcon
+  }
 
   const handleCriarCultura = async () => {
     if (!novaCultura.nome || !novaCultura.area) return
@@ -204,7 +261,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
       setIsLoading(true)
       await api.culturas.create(novaCultura)
       setIsDialogOpen(false)
-      setNovaCultura({ nome: '', area: 0, dataPlantio: new Date().toISOString().split('T')[0] })
+      setNovaCultura({ nome: '', area: 0, dataPlantio: new Date().toISOString().split('T')[0], icone: 'soja', progress: 0 })
       onCulturaCreated?.()
     } catch (error) {
       console.error('Erro ao criar cultura:', error)
@@ -280,6 +337,47 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                   onChange={(e) => setNovaCultura({ ...novaCultura, dataPlantio: e.target.value })}
                 />
               </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Progresso Inicial: {novaCultura.progress || 0}%</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={novaCultura.progress || 0}
+                  onChange={(e) => setNovaCultura({ ...novaCultura, progress: parseInt(e.target.value) })}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                />
+                <div className="flex justify-between text-xs text-gray-400">
+                  <span>0%</span>
+                  <span>50%</span>
+                  <span>100%</span>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Ícone</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {iconOptions.map((option) => {
+                    const IconComponent = option.Icon
+                    const isSelected = novaCultura.icone === option.value
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setNovaCultura({ ...novaCultura, icone: option.value })}
+                        className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center gap-1 ${
+                          isSelected 
+                            ? 'border-emerald-500 bg-emerald-50' 
+                            : 'border-gray-200 hover:border-emerald-300'
+                        }`}
+                      >
+                        <IconComponent className="w-8 h-8" />
+                        <span className="text-xs text-gray-600">{option.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
@@ -290,6 +388,105 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
               >
                 {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Criar Cultura
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Editar Cultura</DialogTitle>
+              <DialogDescription>
+                Atualize as informações da cultura
+              </DialogDescription>
+            </DialogHeader>
+            {editedCultura && selectedCrop && (
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Nome</label>
+                  <Input
+                    value={editedCultura.nome}
+                    onChange={(e) => setEditedCultura({ ...editedCultura, nome: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Área (ha)</label>
+                  <Input
+                    type="number"
+                    value={editedCultura.area || ''}
+                    onChange={(e) => setEditedCultura({ ...editedCultura, area: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Data de Plantio</label>
+                  <Input
+                    type="date"
+                    value={editedCultura.dataPlantio}
+                    onChange={(e) => setEditedCultura({ ...editedCultura, dataPlantio: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Progresso: {editedCultura.progress || 0}%</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={editedCultura.progress || 0}
+                    onChange={(e) => setEditedCultura({ ...editedCultura, progress: parseInt(e.target.value) })}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400">
+                    <span>0%</span>
+                    <span>50%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Ícone</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {iconOptions.map((option) => {
+                      const IconComponent = option.Icon
+                      const isSelected = editedCultura.icone === option.value
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setEditedCultura({ ...editedCultura, icone: option.value })}
+                          className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center gap-1 ${
+                            isSelected ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'
+                          }`}
+                        >
+                          <IconComponent className="w-8 h-8" />
+                          <span className="text-xs text-gray-600">{option.label}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>
+              <Button 
+                onClick={async () => {
+                  if (!selectedCrop || !editedCultura) return
+                  try {
+                    setIsLoading(true)
+                    await api.culturas.update(selectedCrop.id, editedCultura)
+                    setIsEditDialogOpen(false)
+                    onCulturaCreated?.()
+                  } catch (error) {
+                    console.error('Erro ao atualizar cultura:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                disabled={isLoading || !editedCultura?.nome || !editedCultura?.area}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Salvar
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -328,7 +525,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
               const status = statusConfig[crop.status as keyof typeof statusConfig]
               const health = healthConfig[crop.health as keyof typeof healthConfig]
               const StatusIcon = status.icon
-              const CropIcon = crop.Icon || getIconForCrop(crop.name)
+              const CropIcon = crop.Icon || getIconComponent(crop.icone || crop.name)
 
               return (
                 <motion.div
@@ -388,9 +585,44 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-                                <DropdownMenuItem>Editar</DropdownMenuItem>
-                                <DropdownMenuItem>Registrar Atividade</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setSelectedCrop(crop)
+                                  setEditedCultura({
+                                    nome: crop.name,
+                                    area: parseFloat(crop.area.replace(' ha', '')),
+                                    dataPlantio: crop.plantedDate,
+                                    icone: crop.icone,
+                                    progress: crop.progress
+                                  })
+                                  setIsEditDialogOpen(true)
+                                }}>
+                                  Editar Cultura
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setSelectedCrop(crop)
+                                  setEditedCultura({
+                                    nome: crop.name,
+                                    area: parseFloat(crop.area.replace(' ha', '')),
+                                    dataPlantio: crop.plantedDate,
+                                    icone: crop.icone,
+                                    progress: crop.progress
+                                  })
+                                  setIsEditDialogOpen(true)
+                                }}>
+                                  Atualizar Progresso
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-600" onClick={async () => {
+                                  if (confirm(`Tem certeza que deseja excluir "${crop.name}"?`)) {
+                                    try {
+                                      await api.culturas.delete(crop.id)
+                                      onCulturaCreated?.()
+                                    } catch (error) {
+                                      console.error('Erro ao excluir cultura:', error)
+                                    }
+                                  }
+                                }}>
+                                  Excluir
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>

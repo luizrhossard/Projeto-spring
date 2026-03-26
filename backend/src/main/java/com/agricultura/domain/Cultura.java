@@ -35,6 +35,13 @@ public class Cultura {
     @Column(name = "previsao_colheita")
     private LocalDate previsaoColheita;
 
+    @Column(name = "icone", length = 50)
+    private String icone;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer progress = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Usuario user;

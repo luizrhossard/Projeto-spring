@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { API_BASE_URL } from '@/lib/api'
+import api from '@/lib/api'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -21,23 +21,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}))
-        throw new Error(data.message || 'Credenciais inválidas')
-      }
-
-      const data = await response.json()
-      localStorage.setItem('token', data.token)
-      
+      await api.auth.login({ email, password })
       window.location.href = '/'
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao fazer login')
@@ -104,10 +88,6 @@ export default function LoginPage() {
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
-
-          <p className="mt-4 text-center text-sm text-gray-500">
-            Credenciais: admin@agricultura.com / admin123
-          </p>
         </CardContent>
       </Card>
     </div>

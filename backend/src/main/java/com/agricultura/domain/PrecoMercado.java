@@ -34,8 +34,16 @@ public class PrecoMercado {
     @Column(name = "data_atualizacao", nullable = false)
     private LocalDateTime dataAtualizacao;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Usuario user;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @PrePersist
     protected void onCreate() {
         this.dataAtualizacao = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }

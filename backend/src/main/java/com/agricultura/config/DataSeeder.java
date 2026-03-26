@@ -4,6 +4,7 @@ import com.agricultura.domain.Usuario;
 import com.agricultura.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,28 +17,40 @@ public class DataSeeder implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${app.seeder.admin.email:admin@agricultura.com}")
+    private String adminEmail;
+
+    @Value("${app.seeder.admin.password:admin123}")
+    private String adminPassword;
+
+    @Value("${app.seeder.user.email:usuario@agricultura.com}")
+    private String userEmail;
+
+    @Value("${app.seeder.user.password:user123}")
+    private String userPassword;
+
     @Override
     public void run(String... args) {
         if (usuarioRepository.count() == 0) {
             log.info("Criando usuários de teste...");
             
             Usuario admin = Usuario.builder()
-                    .email("admin@agricultura.com")
+                    .email(adminEmail)
                     .name("Administrador")
-                    .password(passwordEncoder.encode("admin123"))
+                    .password(passwordEncoder.encode(adminPassword))
                     .role("ADMIN")
                     .build();
             usuarioRepository.save(admin);
-            log.info("Usuário admin criado: admin@agricultura.com / admin123");
+            log.info("Usuário admin criado: {}", adminEmail);
 
             Usuario usuario = Usuario.builder()
-                    .email("usuario@agricultura.com")
+                    .email(userEmail)
                     .name("Usuário Teste")
-                    .password(passwordEncoder.encode("user123"))
+                    .password(passwordEncoder.encode(userPassword))
                     .role("USER")
                     .build();
             usuarioRepository.save(usuario);
-            log.info("Usuário teste criado: usuario@agricultura.com / user123");
+            log.info("Usuário teste criado: {}", userEmail);
             
             log.info("Seed de dados concluído com sucesso!");
         }

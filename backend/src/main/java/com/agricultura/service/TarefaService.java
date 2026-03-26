@@ -2,10 +2,12 @@ package com.agricultura.service;
 
 import com.agricultura.domain.Cultura;
 import com.agricultura.domain.Tarefa;
+import com.agricultura.domain.Usuario;
 import com.agricultura.dto.TarefaRequest;
 import com.agricultura.dto.TarefaResponse;
 import com.agricultura.repository.CulturaRepository;
 import com.agricultura.repository.TarefaRepository;
+import com.agricultura.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class TarefaService {
 
     private final TarefaRepository tarefaRepository;
     private final CulturaRepository culturaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public List<TarefaResponse> findAll(Long userId) {
@@ -41,16 +44,17 @@ public class TarefaService {
 
     @Transactional
     public TarefaResponse create(TarefaRequest request, Long userId) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
         Tarefa tarefa = Tarefa.builder()
                 .titulo(request.getTitulo())
                 .descricao(request.getDescricao())
                 .prioridade(request.getPrioridade() != null ? request.getPrioridade() : "MEDIA")
                 .status(request.getStatus() != null ? request.getStatus() : "PENDENTE")
                 .dataVencimento(request.getDataVencimento())
+                .user(usuario)
                 .build();
-        
-        tarefa.setUser(new com.agricultura.domain.Usuario());
-        tarefa.getUser().setId(userId);
         
         if (request.getCulturaId() != null) {
             Cultura cultura = culturaRepository.findById(request.getCulturaId())
