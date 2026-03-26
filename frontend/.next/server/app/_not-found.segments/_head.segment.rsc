@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/0_vgd89x5t31u.js","/_next/static/chunks/0d3tkj33oycf2.js","/_next/static/chunks/0w8b9-5-dk-50.js"],"ViewportBoundary"]
+3:I[97367,["/_next/static/chunks/0_vgd89x5t31u.js","/_next/static/chunks/0d3tkj33oycf2.js","/_next/static/chunks/0w8b9-5-dk-50.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Dashboard Agrícola"}],["$","meta","1",{"name":"description","content":"Sistema de gestão agrícola com culturas, tarefas e preços de mercado"}],["$","meta","2",{"name":"keywords","content":"agricultura,dashboard,gestão,culturas"}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"5_wzRk7AnldWoU3vkDQN6"}

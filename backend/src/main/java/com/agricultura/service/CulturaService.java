@@ -1,0 +1,104 @@
+package com.agricultura.service;
+
+import com.agricultura.domain.Cultura;
+import com.agricultura.dto.CulturaRequest;
+import com.agricultura.dto.CulturaResponse;
+import com.agricultura.repository.CulturaRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class CulturaService {
+
+    private final CulturaRepository culturaRepository;
+
+    @Transactional(readOnly = true)
+    public List<CulturaResponse> findAll(Long userId) {
+        return culturaRepository.findByUserId(userId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public CulturaResponse findById(Long id, Long userId) {
+        Cultura cultura = culturaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
+        
+        if (!cultura.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Acesso negado a esta cultura");
+        }
+        
+        return toResponse(cultura);
+    }
+
+    @Transactional
+    public CulturaResponse create(CulturaRequest request, Long userId) {
+        Cultura cultura = Cultura.builder()
+                .nome(request.getNome())
+                .area(request.getArea())
+                .status(request.getStatus() != null ? request.getStatus() : "PLANTADO")
+                .dataPlantio(request.getDataPlantio())
+                .previsaoColheita(request.getPrevisaoColheita())
+                .build();
+        
+        cultura.setUser(new com.agricultura.domain.Usuario());
+        cultura.getUser().setId(userId);
+        
+        cultura = culturaRepository.save(cultura);
+        
+        return toResponse(cultura);
+    }
+
+    @Transactional
+    public CulturaResponse update(Long id, CulturaRequest request, Long userId) {
+        Cultura cultura = culturaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
+        
+        if (!cultura.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Acesso negado a esta cultura");
+        }
+        
+        cultura.setNome(request.getNome());
+        cultura.setArea(request.getArea());
+        if (request.getStatus() != null) {
+            cultura.setStatus(request.getStatus());
+        }
+        cultura.setDataPlantio(request.getDataPlantio());
+        cultura.setPrevisaoColheita(request.getPrevisaoColheita());
+        
+        cultura = culturaRepository.save(cultura);
+        
+        return toResponse(cultura);
+    }
+
+    @Transactional
+    public void delete(Long id, Long userId) {
+        Cultura cultura = culturaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
+        
+        if (!cultura.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Acesso negado a esta cultura");
+        }
+        
+        culturaRepository.delete(cultura);
+    }
+
+    private CulturaResponse toResponse(Cultura cultura) {
+        return CulturaResponse.builder()
+                .id(cultura.getId())
+                .nome(cultura.getNome())
+                .area(cultura.getArea())
+                .status(cultura.getStatus())
+                .dataPlantio(cultura.getDataPlantio())
+                .previsaoColheita(cultura.getPrevisaoColheita())
+                .userId(cultura.getUser().getId())
+                .createdAt(cultura.getCreatedAt())
+                .updatedAt(cultura.getUpdatedAt())
+                .build();
+    }
+}
