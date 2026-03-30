@@ -219,8 +219,8 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
   const completedCount = tasksList.filter(t => t.status === 'completed').length
 
   return (
-    <Card className="border-0 shadow-md overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 bg-gradient-to-r from-white to-gray-50">
+    <Card className="border border-[#dce8df] shadow-sm overflow-hidden bg-white">
+      <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-[#edf3ef] bg-[#f9fcfa]">
         <CardTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
@@ -234,7 +234,7 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/25">
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 shadow-sm">
                   <Plus className="w-4 h-4 mr-1" />
                   Nova Tarefa
                 </Button>
@@ -304,11 +304,11 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
           </Dialog>
         )}
       </CardHeader>
-      <CardContent className="p-5">
+      <CardContent className="p-4">
         {/* Quick Stats */}
         {!compact && (
           <motion.div 
-            className="flex gap-3 mb-5"
+            className="grid grid-cols-3 gap-2 mb-4"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -327,7 +327,7 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
               return (
                 <motion.div
                   key={stat.label}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                  className="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-[#e6efea] bg-[#f8fbf9]"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
@@ -351,7 +351,7 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
         {/* Filter Tabs */}
         {!compact && (
           <Tabs value={filter} onValueChange={setFilter} className="mb-4">
-            <TabsList className="bg-gray-100">
+            <TabsList className="bg-[#eff5f1] border border-[#dce8df]">
               <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Todas</TabsTrigger>
               <TabsTrigger value="pending" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Pendentes</TabsTrigger>
               <TabsTrigger value="in_progress" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Em Progresso</TabsTrigger>
@@ -388,10 +388,10 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
                     x: 5,
                     transition: { duration: 0.2 }
                   }}
-                  className={`p-4 rounded-xl border transition-all duration-300 ${
+                  className={`p-3 rounded-lg border transition-all duration-200 ${
                     task.status === 'completed' 
                       ? 'bg-gray-50/50 border-gray-200 opacity-70' 
-                      : 'bg-white border-gray-100 shadow-sm hover:shadow-lg hover:border-emerald-200'
+                      : 'bg-white border-[#e0ece3] hover:shadow-sm hover:border-emerald-200'
                   }`}
                   style={{ perspective: 1000 }}
                 >
@@ -449,21 +449,21 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
 
                       <div className="flex flex-wrap items-center gap-3 mt-3 ml-9 text-xs text-gray-400">
                         <motion.div 
-                          className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-full"
+                          className="flex items-center gap-1 bg-[#f3f7f4] px-2 py-1 rounded-md"
                           whileHover={{ scale: 1.02 }}
                         >
                           <Calendar className="w-3 h-3" />
                           <span>{new Date(task.dueDate).toLocaleDateString('pt-BR')}</span>
                         </motion.div>
                         <motion.div 
-                          className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-full"
+                          className="flex items-center gap-1 bg-[#f3f7f4] px-2 py-1 rounded-md"
                           whileHover={{ scale: 1.02 }}
                         >
                           <MapPin className="w-3 h-3" />
                           <span>{task.location}</span>
                         </motion.div>
                         <motion.div 
-                          className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-full"
+                          className="flex items-center gap-1 bg-[#f3f7f4] px-2 py-1 rounded-md"
                           whileHover={{ scale: 1.02 }}
                         >
                           <User className="w-3 h-3" />
@@ -498,7 +498,7 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
           >
             <Button
               variant="ghost"
-              className="w-full mt-3 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+              className="w-full mt-3 text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
               onClick={() => setIsAllTasksDialogOpen(true)}
             >
               Ver todas as tarefas
@@ -567,3 +567,4 @@ export function TasksPanel({ compact = false, tarefas, onTarefaCreated }: TasksP
     </Card>
   )
 }
+

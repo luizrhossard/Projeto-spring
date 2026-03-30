@@ -1,0 +1,23 @@
+package com.agricultura.dto;
+
+import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class MovimentoEstoqueResponse {
+
+    private Long id;
+    private String tipo;
+    private BigDecimal quantidade;
+    private BigDecimal quantidadeAnterior;
+    private BigDecimal quantidadeAtual;
+    private String motivo;
+    private String responsavel;
+    private Long insumoId;
+    private String insumoNome;
+    private LocalDateTime createdAt;
+}

@@ -94,7 +94,7 @@ class CulturaServiceTest {
     void create_Success() {
         CulturaRequest request = new CulturaRequest();
         request.setNome("Soja");
-        request.setArea(new BigDecimal("20.0"));
+        request.setArea(20.0);
         request.setDataPlantio(LocalDate.now());
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
@@ -115,7 +115,7 @@ class CulturaServiceTest {
     void create_UserNotFound_ThrowsException() {
         CulturaRequest request = new CulturaRequest();
         request.setNome("Soja");
-        request.setArea(new BigDecimal("20.0"));
+        request.setArea(20.0);
         request.setDataPlantio(LocalDate.now());
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());

@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.brand-logo-green {
+  filter: brightness(0) saturate(100%) invert(36%) sepia(64%) saturate(788%) hue-rotate(116deg) brightness(94%) contrast(92%);
+}

@@ -83,10 +83,10 @@ const getIconForCrop = (name: string): React.ComponentType<{ className?: string 
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     'Soja': SojaIcon,
     'Milho': MilhoIcon,
-    'Café': CafeIcon,
-    'Feijão': FeijaoIcon,
-    'Algodão': AlgodaoIcon,
-    'Cana-de-Açúcar': CanaIcon,
+    'Cafe': CafeIcon,
+    'Feijao': FeijaoIcon,
+    'Algodao': AlgodaoIcon,
+    'Cana-de-Acucar': CanaIcon,
   }
   return iconMap[name] || GenericCropIcon
 }
@@ -102,7 +102,7 @@ const defaultCrops: CropData[] = [
     plantedDate: '2024-09-15',
     harvestDate: '2025-02-15',
     health: 'good',
-    irrigation: 'Automática',
+    irrigation: 'Automatica',
     color: '#22c55e',
     gradient: 'from-green-500 to-emerald-600',
     Icon: SojaIcon
@@ -110,7 +110,7 @@ const defaultCrops: CropData[] = [
   {
     id: 2,
     name: 'Milho',
-    variety: 'Híbrido 2B587',
+    variety: 'Hibrido 2B587',
     area: '80 ha',
     status: 'growing',
     progress: 45,
@@ -124,8 +124,8 @@ const defaultCrops: CropData[] = [
   },
   {
     id: 3,
-    name: 'Café',
-    variety: 'Arábica',
+    name: 'Cafe',
+    variety: 'Arabica',
     area: '150 ha',
     status: 'harvest',
     progress: 90,
@@ -139,7 +139,7 @@ const defaultCrops: CropData[] = [
   },
   {
     id: 4,
-    name: 'Feijão',
+    name: 'Feijao',
     variety: 'Carioca',
     area: '50 ha',
     status: 'planted',
@@ -147,14 +147,14 @@ const defaultCrops: CropData[] = [
     plantedDate: '2024-11-20',
     harvestDate: '2025-02-20',
     health: 'good',
-    irrigation: 'Automática',
+    irrigation: 'Automatica',
     color: '#b45309',
     gradient: 'from-orange-500 to-amber-600',
     Icon: FeijaoIcon
   },
   {
     id: 5,
-    name: 'Algodão',
+    name: 'Algodao',
     variety: 'FM 966',
     area: '50 ha',
     status: 'growing',
@@ -162,14 +162,14 @@ const defaultCrops: CropData[] = [
     plantedDate: '2024-09-01',
     harvestDate: '2025-04-01',
     health: 'excellent',
-    irrigation: 'Pivô Central',
+    irrigation: 'Pivo Central',
     color: '#84cc16',
     gradient: 'from-lime-400 to-green-500',
     Icon: AlgodaoIcon
   },
   {
     id: 6,
-    name: 'Cana-de-Açúcar',
+    name: 'Cana-de-Acucar',
     variety: 'RB867515',
     area: '100 ha',
     status: 'growing',
@@ -177,7 +177,7 @@ const defaultCrops: CropData[] = [
     plantedDate: '2024-04-15',
     harvestDate: '2025-05-15',
     health: 'good',
-    irrigation: 'Automática',
+    irrigation: 'Automatica',
     color: '#4ade80',
     gradient: 'from-green-400 to-emerald-500',
     Icon: CanaIcon
@@ -193,8 +193,8 @@ const statusConfig = {
 const healthConfig = {
   excellent: { label: 'Excelente', color: 'text-emerald-600', bg: 'bg-emerald-500' },
   good: { label: 'Bom', color: 'text-green-600', bg: 'bg-green-500' },
-  warning: { label: 'Atenção', color: 'text-amber-600', bg: 'bg-amber-500' },
-  critical: { label: 'Crítico', color: 'text-red-600', bg: 'bg-red-500' }
+  warning: { label: 'Atencao', color: 'text-amber-600', bg: 'bg-amber-500' },
+  critical: { label: 'Critico', color: 'text-red-600', bg: 'bg-red-500' }
 }
 
 export function CropManagement({ compact = false, culturas, onCulturaCreated }: CropManagementProps) {
@@ -212,13 +212,14 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
     icone: 'soja',
     progress: 0
   })
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const iconOptions = [
     { value: 'soja', label: 'Soja', Icon: SojaIcon },
     { value: 'milho', label: 'Milho', Icon: MilhoIcon },
-    { value: 'cafe', label: 'Café', Icon: CafeIcon },
-    { value: 'feijao', label: 'Feijão', Icon: FeijaoIcon },
-    { value: 'algodao', label: 'Algodão', Icon: AlgodaoIcon },
+    { value: 'cafe', label: 'Cafe', Icon: CafeIcon },
+    { value: 'feijao', label: 'Feijao', Icon: FeijaoIcon },
+    { value: 'algodao', label: 'Algodao', Icon: AlgodaoIcon },
     { value: 'cana', label: 'Cana', Icon: CanaIcon },
     { value: 'arroz', label: 'Arroz', Icon: ArrozIcon },
     { value: 'trigo', label: 'Trigo', Icon: TrigoIcon },
@@ -256,15 +257,20 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
 
   const handleCriarCultura = async () => {
     if (!novaCultura.nome || !novaCultura.area) return
-    
+
     try {
       setIsLoading(true)
+      setErrorMessage(null)
       await api.culturas.create(novaCultura)
       setIsDialogOpen(false)
       setNovaCultura({ nome: '', area: 0, dataPlantio: new Date().toISOString().split('T')[0], icone: 'soja', progress: 0 })
       onCulturaCreated?.()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao criar cultura:', error)
+      // Nao mostra mensagem de erro se for redirecionamento por token expirado
+      if (error.status !== 401) {
+        setErrorMessage(error.message || 'Erro ao criar cultura. Verifique os dados e tente novamente.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -273,7 +279,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
   const crops = culturas || defaultCrops
 
   const filteredCrops = crops.filter(crop => {
-    const matchesSearch = crop.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesSearch = (crop.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     const matchesFilter = filter === 'all' || crop.status === filter
     return matchesSearch && matchesFilter
   })
@@ -281,8 +287,8 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
   const displayCrops = compact ? filteredCrops.slice(0, 4) : filteredCrops
 
   return (
-    <Card className="border-0 shadow-md overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 bg-gradient-to-r from-white to-gray-50">
+    <Card className="border border-[#dce8df] shadow-sm overflow-hidden bg-white">
+      <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-[#edf3ef] bg-[#f9fcfa]">
         <CardTitle className="text-xl font-bold text-gray-800 flex items-center gap-2">
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
@@ -290,12 +296,17 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
           >
             <TrendingUp className="w-6 h-6 text-emerald-600" />
           </motion.div>
-          Gestão de Culturas
+          Gestao de Culturas
         </CardTitle>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open)
+          if (!open) {
+            setErrorMessage(null)
+          }
+        }}>
           <DialogTrigger asChild>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg shadow-emerald-500/25">
+              <Button className="bg-emerald-600 hover:bg-emerald-700 shadow-sm">
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Cultura
               </Button>
@@ -308,18 +319,24 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                 Adicione uma nova cultura ao seu cadastro
               </DialogDescription>
             </DialogHeader>
+            {errorMessage && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm flex items-center gap-2 animate-pulse">
+                <AlertTriangle className="w-4 h-4" />
+                {errorMessage}
+              </div>
+            )}
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <label htmlFor="nome" className="text-sm font-medium">Nome da Cultura</label>
                 <Input
                   id="nome"
-                  placeholder="Ex: Soja, Milho, Café..."
+                  placeholder="Ex: Soja, Milho, Cafe..."
                   value={novaCultura.nome}
                   onChange={(e) => setNovaCultura({ ...novaCultura, nome: e.target.value })}
                 />
               </div>
               <div className="grid gap-2">
-                <label htmlFor="area" className="text-sm font-medium">Área (ha)</label>
+                <label htmlFor="area" className="text-sm font-medium">Area (ha)</label>
                 <Input
                   id="area"
                   type="number"
@@ -410,7 +427,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label className="text-sm font-medium">Área (ha)</label>
+                  <label className="text-sm font-medium">Area (ha)</label>
                   <Input
                     type="number"
                     value={editedCultura.area || ''}
@@ -492,7 +509,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-5">
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <motion.div 
@@ -510,7 +527,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
             />
           </motion.div>
           <Tabs value={filter} onValueChange={setFilter}>
-            <TabsList className="bg-gray-100">
+            <TabsList className="bg-[#eff5f1] border border-[#dce8df]">
               <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Todas</TabsTrigger>
               <TabsTrigger value="growing" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Crescendo</TabsTrigger>
               <TabsTrigger value="harvest" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Colheita</TabsTrigger>
@@ -519,7 +536,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
         </div>
 
         {/* Crops Grid */}
-        <div className={`grid gap-5 ${compact ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+        <div className={`grid gap-4 ${compact ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
           <AnimatePresence mode="popLayout">
             {displayCrops.map((crop, index) => {
               const status = statusConfig[crop.status as keyof typeof statusConfig]
@@ -541,25 +558,16 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                     stiffness: 100 
                   }}
                 >
-                  <Card3D intensity={8}>
-                    <Card className="border border-gray-100 hover:shadow-2xl transition-shadow duration-500 overflow-hidden group">
+                  <div>
+                    <Card className="border border-[#dce8df] hover:shadow-md transition-shadow duration-300 overflow-hidden bg-white">
                       <CardContent className="p-0">
-                        {/* Header with gradient */}
-                        <div className={`p-4 bg-gradient-to-r ${crop.gradient} relative overflow-hidden`}>
-                          {/* Animated background pattern */}
-                          <div className="absolute inset-0 opacity-10">
-                            <motion.div 
-                              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,white_1px,transparent_1px)] bg-[length:20px_20px]"
-                              animate={{ backgroundPosition: ['0px 0px', '20px 20px'] }}
-                              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                            />
-                          </div>
-                          
-                          <div className="flex items-start justify-between relative z-10">
+                        {/* Header */}
+                        <div className="p-4 border-b border-[#edf3ef]" style={{ borderTop: `4px solid ${crop.color}` }}>
+                          <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
                               {/* Floating Icon */}
                               <motion.div 
-                                className="p-2 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg"
+                                className="p-2 bg-[#f2f7f3] rounded-lg"
                                 animate={{ 
                                   y: [0, -5, 0],
                                   rotateZ: [0, 2, -2, 0]
@@ -574,13 +582,13 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                                 <CropIcon className="w-10 h-10" />
                               </motion.div>
                               <div>
-                                <h3 className="font-bold text-white text-lg drop-shadow-sm">{crop.name}</h3>
-                                <p className="text-sm text-white/80">{crop.variety}</p>
+                                <h3 className="font-semibold text-slate-800 text-base">{crop.name}</h3>
+                                <p className="text-sm text-slate-500">{crop.variety}</p>
                               </div>
                             </div>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:bg-slate-100">
                                   <MoreVertical className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -629,7 +637,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                         </div>
 
                         {/* Content */}
-                        <div className="p-4 space-y-4 bg-gradient-to-b from-white to-gray-50/50">
+                        <div className="p-4 space-y-4">
                           {/* Status and Area */}
                           <div className="flex items-center justify-between">
                             <motion.div
@@ -686,7 +694,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                                 {health.label}
                               </span>
                             </motion.div>
-                            <div className="flex items-center gap-1 text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                            <div className="flex items-center gap-1 text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
                               <Droplets className="w-3 h-3" />
                               <span className="text-xs font-medium">{crop.irrigation}</span>
                             </div>
@@ -706,7 +714,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                         </div>
                       </CardContent>
                     </Card>
-                  </Card3D>
+                  </div>
                 </motion.div>
               )
             })}
@@ -720,7 +728,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <Button variant="outline" className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300">
+            <Button variant="outline" className="text-emerald-700 border-[#d5e4da] hover:bg-emerald-50">
               Ver Todas as Culturas ({crops.length})
             </Button>
           </motion.div>
@@ -729,3 +737,4 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
     </Card>
   )
 }
+

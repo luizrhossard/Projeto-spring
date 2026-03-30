@@ -22,6 +22,7 @@ public class TarefaService {
     private final TarefaRepository tarefaRepository;
     private final CulturaRepository culturaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final NotificacaoService notificacaoService;
 
     @Transactional(readOnly = true)
     public List<TarefaResponse> findAll(Long userId) {
@@ -64,6 +65,13 @@ public class TarefaService {
         
         tarefa = tarefaRepository.save(tarefa);
         
+        notificacaoService.criarNotificacao(
+            userId,
+            "Nova tarefa criada",
+            tarefa.getTitulo(),
+            "INFO"
+        );
+        
         return toResponse(tarefa);
     }
 
@@ -81,6 +89,7 @@ public class TarefaService {
         if (request.getPrioridade() != null) {
             tarefa.setPrioridade(request.getPrioridade());
         }
+        String statusAnterior = tarefa.getStatus();
         if (request.getStatus() != null) {
             tarefa.setStatus(request.getStatus());
         }
@@ -96,7 +105,22 @@ public class TarefaService {
         
         tarefa = tarefaRepository.save(tarefa);
         
+        if (request.getStatus() != null && "CONCLUIDA".equals(request.getStatus()) 
+            && !request.getStatus().equals(statusAnterior)) {
+            notificacaoService.criarNotificacao(
+                userId,
+                "Tarefa concluída",
+                tarefa.getTitulo(),
+                "SUCESSO"
+            );
+        }
+        
         return toResponse(tarefa);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Tarefa> findAllTarefas() {
+        return tarefaRepository.findAll();
     }
 
     @Transactional

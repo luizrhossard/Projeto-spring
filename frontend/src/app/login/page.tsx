@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/context/AuthContext'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -32,8 +33,17 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center pb-2">
+          <div className="mx-auto mb-3 h-14 w-14 rounded-xl bg-emerald-600/10 flex items-center justify-center overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={36}
+              height={36}
+              className="brand-logo-green"
+            />
+          </div>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Dashboard Agrícola
+            Dashboard Agricola
           </CardTitle>
           <CardDescription>
             Entre com suas credenciais
@@ -55,7 +65,7 @@ export default function LoginPage() {
                 disabled={loading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium">
                 Senha
@@ -63,7 +73,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -77,8 +87,8 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-emerald-600 hover:bg-emerald-700"
               disabled={loading}
             >

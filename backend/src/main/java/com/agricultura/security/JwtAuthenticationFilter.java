@@ -1,10 +1,13 @@
 package com.agricultura.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,13 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -56,8 +63,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+        } catch (ExpiredJwtException e) {
+            String expiredUserEmail = e.getClaims().getSubject();
+            log.warn("Token JWT expirado para usuário: {}", expiredUserEmail);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Token expirado");
+            errorResponse.put("message", "Sua sessão expirou. Por favor, faça login novamente.");
+            errorResponse.put("status", 401);
+
+            objectMapper.writeValue(response.getWriter(), errorResponse);
+            return;
         } catch (Exception e) {
-            logger.error("Não foi possível definir a autenticação do usuário", e);
+            log.error("Não foi possível definir a autenticação do usuário", e);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Token inválido");
+            errorResponse.put("message", "Token de autenticação inválido.");
+            errorResponse.put("status", 401);
+            
+            objectMapper.writeValue(response.getWriter(), errorResponse);
+            return;
         }
 
         filterChain.doFilter(request, response);

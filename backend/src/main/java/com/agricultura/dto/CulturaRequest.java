@@ -4,19 +4,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
 public class CulturaRequest {
-    @NotBlank(message = "Nome é obrigatório")
+    @NotBlank(message = "O nome da cultura é obrigatório")
     private String nome;
 
-    @NotNull(message = "Área é obrigatória")
-    @Positive(message = "Área deve ser positiva")
-    private BigDecimal area;
+    @NotNull(message = "A área é obrigatória")
+    @Positive(message = "A área deve ser um valor positivo")
+    private Double area;
 
     private String status;
+
+    @NotNull(message = "A data de plantio é obrigatória")
     private LocalDate dataPlantio;
     private LocalDate previsaoColheita;
     private String icone;

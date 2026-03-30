@@ -102,11 +102,11 @@ class CulturaControllerTest {
     void create_Success() throws Exception {
         CulturaRequest request = new CulturaRequest();
         request.setNome("Soja");
-        request.setArea(new BigDecimal("20.0"));
+        request.setArea(20.0);
         request.setDataPlantio(LocalDate.now());
 
         when(culturaService.create(any(CulturaRequest.class), eq(1L))).thenReturn(culturaResponse);
-        
+
         when(authService.getCurrentUser()).thenReturn(usuarioEntity);
 
         mockMvc.perform(post("/api/culturas")
@@ -119,12 +119,12 @@ class CulturaControllerTest {
     void update_Success() throws Exception {
         CulturaRequest request = new CulturaRequest();
         request.setNome("Milho Atualizado");
-        request.setArea(new BigDecimal("15.0"));
+        request.setArea(15.0);
         request.setDataPlantio(LocalDate.now());
 
         when(culturaService.update(eq(1L), any(CulturaRequest.class), eq(1L)))
                 .thenReturn(culturaResponse);
-        
+
         when(authService.getCurrentUser()).thenReturn(usuarioEntity);
 
         mockMvc.perform(put("/api/culturas/1")

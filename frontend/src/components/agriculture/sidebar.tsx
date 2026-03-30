@@ -11,36 +11,63 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  X
+  X,
+  Package
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import Image from 'next/image'
+
+interface CropData {
+  id: number
+  name: string
+  area: string
+  status: string
+  progress: number
+}
 
 interface SidebarProps {
   activeSection: string
   setActiveSection: (section: string) => void
   isOpen: boolean
   setIsOpen: (open: boolean) => void
+  culturas?: CropData[]
 }
 
 const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'from-emerald-400 to-green-500' },
-  { id: 'crops', label: 'Culturas', icon: Sprout, color: 'from-green-400 to-emerald-500' },
-  { id: 'market', label: 'Mercado', icon: TrendingUp, color: 'from-amber-400 to-orange-500' },
-  { id: 'tasks', label: 'Tarefas', icon: ClipboardList, color: 'from-sky-400 to-blue-500' },
-  { id: 'analytics', label: 'Análises', icon: BarChart3, color: 'from-purple-400 to-violet-500' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'crops', label: 'Culturas', icon: Sprout },
+  { id: 'insumos', label: 'Insumos', icon: Package },
+  { id: 'market', label: 'Mercado', icon: TrendingUp },
+  { id: 'tasks', label: 'Tarefas', icon: ClipboardList },
+  { id: 'analytics', label: 'Analises', icon: BarChart3 },
 ]
 
-export function Sidebar({ activeSection, setActiveSection, isOpen, setIsOpen }: SidebarProps) {
-  const { logout, user } = useAuth()
+export function Sidebar({ activeSection, setActiveSection, isOpen, setIsOpen, culturas = [] }: SidebarProps) {
+  const { logout } = useAuth()
+
+  const culturasAtivas = culturas.length
+  const areaTotal = culturas.reduce((acc, c) => {
+    const area = parseFloat(c.area.replace(' ha', '')) || 0
+    return acc + area
+  }, 0)
+
+  const calcularColheitaEstimada = () => {
+    if (culturas.length === 0) return '-'
+
+    const colheitaCount = culturas.filter(c => c.status === 'HARVEST').length
+    if (colheitaCount > 0) {
+      return `${colheitaCount} pronta(s)`
+    }
+    return '-'
+  }
 
   return (
     <>
-      {/* Mobile overlay */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          <motion.div
+            className="fixed inset-0 bg-black/35 backdrop-blur-sm z-40 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -48,222 +75,101 @@ export function Sidebar({ activeSection, setActiveSection, isOpen, setIsOpen }: 
           />
         )}
       </AnimatePresence>
-      
-      {/* Sidebar */}
+
       <motion.aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-screen w-72 text-white transition-transform duration-300 ease-in-out",
-          "lg:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          'fixed left-0 top-0 z-50 h-screen w-72 transition-transform duration-300 ease-in-out border-r border-[#dce8df] bg-[#f7faf8]',
+          'lg:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
         initial={false}
-        style={{
-          background: 'linear-gradient(180deg, #065f46 0%, #064e3b 50%, #022c22 100%)'
-        }}
       >
-        <div className="flex flex-col h-full relative overflow-hidden">
-          {/* Animated background pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <motion.div 
-              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,white_1px,transparent_1px)] bg-[length:40px_40px]"
-              animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            />
-          </div>
-          
-          {/* Floating orbs */}
-          <motion.div 
-            className="absolute -right-20 top-1/4 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl"
-            animate={{ 
-              scale: [1, 1.3, 1],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div 
-            className="absolute -left-20 bottom-1/4 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl"
-            animate={{ 
-              scale: [1.3, 1, 1.3],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          
-          {/* Logo */}
-          <div className="relative z-10 p-4 border-b border-emerald-700/30">
-            <motion.div
-              className="flex flex-col items-center"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <motion.div
-                className="relative w-28 h-auto mb-2"
-                animate={{
-                  scale: [1, 1.02, 1],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <img
-                  src="/logomarca.png"
-                  alt="AgriConnect"
-                  className="w-full h-auto drop-shadow-lg"
-                  style={{ mixBlendMode: 'multiply' }}
-                />
-              </motion.div>
-            </motion.div>
-            
+        <div className="flex h-full flex-col">
+          <div className="relative px-4 py-4 border-b border-[#e1ece4]">
+            <div className="flex items-center justify-center">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={140}
+                height={44}
+                className="brand-logo-green h-auto w-auto max-h-11"
+                priority
+              />
+            </div>
+
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-3 top-3 lg:hidden text-white hover:bg-emerald-700/50"
+              className="absolute right-3 top-3 lg:hidden text-slate-600 hover:bg-slate-100"
               onClick={() => setIsOpen(false)}
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
 
-          {/* Navigation */}
-          <ScrollArea className="relative z-10 flex-1 px-4 py-6">
-            <nav className="space-y-2">
-              {menuItems.map((item, index) => {
+          <ScrollArea className="flex-1 px-3 py-4">
+            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Menu principal</p>
+            <nav className="space-y-1">
+              {menuItems.map((item) => {
                 const Icon = item.icon
                 const isActive = activeSection === item.id
+
                 return (
-                  <motion.button
+                  <button
                     key={item.id}
                     onClick={() => {
                       setActiveSection(item.id)
                       setIsOpen(false)
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-all duration-300 relative overflow-hidden group",
-                      isActive 
-                        ? "text-emerald-900" 
-                        : "text-emerald-100 hover:bg-emerald-700/30"
+                      'w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
+                      isActive
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-white hover:text-slate-900'
                     )}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    whileHover={{ x: 5, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                    {/* Active background */}
-                    <AnimatePresence>
-                      {isActive && (
-                        <motion.div
-                          className="absolute inset-0 bg-white shadow-lg"
-                          layoutId="activeNav"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                          style={{ borderRadius: 12 }}
-                        />
-                      )}
-                    </AnimatePresence>
-                    
-                    {/* Hover glow */}
-                    {!isActive && (
-                      <motion.div
-                        className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
-                        style={{ borderRadius: 12 }}
-                      />
-                    )}
-                    
-                    <motion.div
-                      animate={isActive ? { 
-                        rotate: [0, 10, -10, 0],
-                        scale: [1, 1.1, 1]
-                      } : {}}
-                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="relative z-10"
-                    >
-                      <Icon className={cn(
-                        "w-5 h-5 transition-colors",
-                        isActive ? "text-emerald-600" : "text-emerald-300 group-hover:text-white"
-                      )} />
-                    </motion.div>
-                    
-                    <span className={cn(
-                      "font-medium relative z-10 transition-colors",
-                      isActive ? "text-emerald-800" : "group-hover:text-white"
-                    )}>
-                      {item.label}
-                    </span>
-                    
-                    {isActive && (
-                      <motion.div
-                        className="ml-auto w-2 h-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 shadow-lg shadow-amber-500/50"
-                        animate={{ 
-                          scale: [1, 1.3, 1],
-                          opacity: [1, 0.7, 1]
-                        }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      />
-                    )}
-                  </motion.button>
+                    <Icon className="h-4 w-4" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
                 )
               })}
             </nav>
 
-            {/* Quick Stats */}
-            <motion.div 
-              className="mt-8 p-4 bg-emerald-700/20 backdrop-blur-sm rounded-xl border border-emerald-600/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h3 className="text-sm font-semibold text-emerald-200 mb-3">Resumo Rápido</h3>
-              <div className="space-y-3">
-                {[
-                  { label: 'Culturas Ativas', value: '12', color: 'from-emerald-400 to-green-500' },
-                  { label: 'Área Total', value: '450 ha', color: 'from-amber-400 to-orange-500' },
-                  { label: 'Colheita Est.', value: '15 dias', color: 'from-sky-400 to-blue-500' }
-                ].map((stat, index) => (
-                  <motion.div 
-                    key={stat.label}
-                    className="flex justify-between items-center"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                  >
-                    <span className="text-sm text-emerald-300/80">{stat.label}</span>
-                    <motion.span 
-                      className={`text-lg font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
-                    >
-                      {stat.value}
-                    </motion.span>
-                  </motion.div>
-                ))}
+            <div className="mt-6 rounded-xl border border-[#deebe2] bg-white p-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Resumo</h3>
+              <div className="mt-3 space-y-2.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500">Culturas</span>
+                  <span className="font-semibold text-slate-800">{culturasAtivas}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500">Area total</span>
+                  <span className="font-semibold text-slate-800">{areaTotal > 0 ? `${areaTotal} ha` : '-'}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-500">Colheita est.</span>
+                  <span className="font-semibold text-slate-800">{calcularColheitaEstimada()}</span>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </ScrollArea>
 
-          {/* Footer */}
-          <div className="relative z-10 p-4 border-t border-emerald-700/30">
-            <nav className="space-y-2">
-              <motion.button
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-700/30 transition-all group"
-                whileHover={{ x: 5 }}
-              >
-                <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                <span className="font-medium">Configurações</span>
-              </motion.button>
-              <motion.button
-                onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-red-500/20 hover:text-red-300 transition-all group"
-                whileHover={{ x: 5 }}
-              >
-                <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
-                <span className="font-medium">Sair</span>
-              </motion.button>
-            </nav>
+          <div className="border-t border-[#e1ece4] p-3">
+            <button className="mb-1 w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-white hover:text-slate-900 transition-colors">
+              <Settings className="h-4 w-4" />
+              <span className="font-medium">Configuracoes</span>
+            </button>
+            <button
+              onClick={logout}
+              className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="font-medium">Sair</span>
+            </button>
           </div>
         </div>
       </motion.aside>
     </>
   )
 }
+

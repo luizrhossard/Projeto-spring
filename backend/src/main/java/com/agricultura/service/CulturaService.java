@@ -43,10 +43,10 @@ public class CulturaService {
     public CulturaResponse create(CulturaRequest request, Long userId) {
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        
+
         Cultura cultura = Cultura.builder()
                 .nome(request.getNome())
-                .area(request.getArea())
+                .area(java.math.BigDecimal.valueOf(request.getArea()))
                 .status(request.getStatus() != null ? request.getStatus() : "PLANTADO")
                 .dataPlantio(request.getDataPlantio())
                 .previsaoColheita(request.getPrevisaoColheita())
@@ -54,9 +54,9 @@ public class CulturaService {
                 .progress(request.getProgress() != null ? request.getProgress() : 0)
                 .user(usuario)
                 .build();
-        
+
         cultura = culturaRepository.save(cultura);
-        
+
         return toResponse(cultura);
     }
 
@@ -64,13 +64,13 @@ public class CulturaService {
     public CulturaResponse update(Long id, CulturaRequest request, Long userId) {
         Cultura cultura = culturaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
-        
+
         if (!cultura.getUser().getId().equals(userId)) {
             throw new RuntimeException("Acesso negado a esta cultura");
         }
-        
+
         cultura.setNome(request.getNome());
-        cultura.setArea(request.getArea());
+        cultura.setArea(java.math.BigDecimal.valueOf(request.getArea()));
         if (request.getStatus() != null) {
             cultura.setStatus(request.getStatus());
         }
@@ -82,9 +82,9 @@ public class CulturaService {
         if (request.getProgress() != null) {
             cultura.setProgress(request.getProgress());
         }
-        
+
         cultura = culturaRepository.save(cultura);
-        
+
         return toResponse(cultura);
     }
 

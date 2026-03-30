@@ -116,6 +116,63 @@ export interface UsuarioResponse {
   createdAt: string;
 }
 
+export interface NotificacaoResponse {
+  id: number;
+  titulo: string;
+  mensagem: string | null;
+  tipo: string;
+  lida: boolean;
+  dataCriacao: string;
+}
+
+export interface InsumoResponse {
+  id: number;
+  nome: string;
+  tipo: string;
+  quantidade: number;
+  unidade: string;
+  precoUnitario: number;
+  dataValidade: string | null;
+  fornecedor: string | null;
+  estoqueMinimo: number;
+  ativo: boolean;
+  estoqueBaixo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InsumoRequest {
+  nome: string;
+  tipo: string;
+  quantidade: number;
+  unidade: string;
+  precoUnitario: number;
+  dataValidade?: string;
+  fornecedor?: string;
+  estoqueMinimo?: number;
+}
+
+export interface MovimentoEstoqueResponse {
+  id: number;
+  tipo: string;
+  quantidade: number;
+  quantidadeAnterior: number | null;
+  quantidadeAtual: number | null;
+  motivo: string | null;
+  responsavel: string | null;
+  insumoId: number;
+  insumoNome: string;
+  createdAt: string;
+}
+
+export interface MovimentoEstoqueRequest {
+  insumoId: number;
+  tipo: string;
+  quantidade: number;
+  motivo?: string;
+  responsavel?: string;
+}
+
 class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -135,7 +192,7 @@ async function authenticatedFetch(
   options: RequestInit = {}
 ): Promise<Response> {
   const token = getAuthToken();
-  
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
@@ -151,8 +208,24 @@ async function authenticatedFetch(
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
-    throw new ApiError(response.status, errorData.message || 'Erro na requisição');
+    // Token expirado ou inválido (401) - limpa o token e redireciona para login
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+      throw new ApiError(401, 'Sua sessão expirou. Por favor, faça login novamente.');
+    }
+
+    const errorData = await response.json().catch(() => ({}));
+    let errorMessage = errorData.message || errorData.error || 'Erro na requisição';
+
+    // Suporte para erros de validação do Spring (Bean Validation)
+    if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+      errorMessage = errorData.errors[0].defaultMessage || errorMessage;
+    }
+
+    throw new ApiError(response.status, errorMessage);
   }
 
   return response;
@@ -308,6 +381,90 @@ export const api = {
   usuarios: {
     getAll: async (): Promise<UsuarioResponse[]> => {
       const response = await authenticatedFetch(`${API_BASE_URL}/api/usuarios`);
+      return response.json();
+    },
+  },
+
+  notificacoes: {
+    getAll: async (usuarioId: number): Promise<NotificacaoResponse[]> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/notificacoes?usuarioId=${usuarioId}`);
+      return response.json();
+    },
+
+    getNaoLidas: async (usuarioId: number): Promise<NotificacaoResponse[]> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/notificacoes/nao-lidas?usuarioId=${usuarioId}`);
+      return response.json();
+    },
+
+    getContagem: async (usuarioId: number): Promise<{ quantidade: number }> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/notificacoes/contagem?usuarioId=${usuarioId}`);
+      return response.json();
+    },
+
+    marcarComoLida: async (id: number): Promise<void> => {
+      await authenticatedFetch(`${API_BASE_URL}/api/notificacoes/${id}/ler`, {
+        method: 'PUT',
+      });
+    },
+
+    marcarTodasComoLidas: async (usuarioId: number): Promise<void> => {
+      await authenticatedFetch(`${API_BASE_URL}/api/notificacoes/ler-todas?usuarioId=${usuarioId}`, {
+        method: 'PUT',
+      });
+    },
+  },
+
+  insumos: {
+    getAll: async (): Promise<InsumoResponse[]> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos`);
+      return response.json();
+    },
+
+    getById: async (id: number): Promise<InsumoResponse> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos/${id}`);
+      return response.json();
+    },
+
+    create: async (data: InsumoRequest): Promise<InsumoResponse> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+
+    update: async (id: number, data: InsumoRequest): Promise<InsumoResponse> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+      await authenticatedFetch(`${API_BASE_URL}/api/insumos/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    getEstoqueBaixo: async (): Promise<InsumoResponse[]> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos/estoque-baixo`);
+      return response.json();
+    },
+
+    registrarMovimento: async (data: MovimentoEstoqueRequest): Promise<MovimentoEstoqueResponse> => {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/insumos/movimento`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+
+    getMovimentos: async (insumoId?: number, page: number = 0, size: number = 10): Promise<{ content: MovimentoEstoqueResponse[]; totalElements: number; totalPages: number; number: number }> => {
+      const url = insumoId 
+        ? `${API_BASE_URL}/api/insumos/${insumoId}/movimentos?page=${page}&size=${size}`
+        : `${API_BASE_URL}/api/insumos/movimentos?page=${page}&size=${size}`;
+      const response = await authenticatedFetch(url);
       return response.json();
     },
   },

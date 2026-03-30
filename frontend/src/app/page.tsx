@@ -187,7 +187,7 @@ export default function Home() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <p className="text-red-600 mb-4">{error}</p>
-            <button 
+            <button
               onClick={fetchData}
               className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
             >
@@ -205,13 +205,13 @@ export default function Home() {
     switch (activeSection) {
       case 'dashboard':
         return (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <DashboardOverview culturas={culturasData} tarefas={tarefasData} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+              <div className="xl:col-span-8">
                 <CropManagement compact culturas={culturasData} onCulturaCreated={handleCulturaCreated} />
               </div>
-              <div className="space-y-6">
+              <div className="xl:col-span-4 space-y-5">
                 <WeatherWidget />
                 <TasksPanel compact tarefas={tarefasData} onTarefaCreated={handleTarefaCreated} />
               </div>
@@ -221,6 +221,9 @@ export default function Home() {
         )
       case 'crops':
         return <CropManagement culturas={culturasData} onCulturaCreated={handleCulturaCreated} />
+      case 'insumos':
+        router.push('/insumos')
+        return null
       case 'market':
         return <MarketPrices />
       case 'tasks':
@@ -229,13 +232,13 @@ export default function Home() {
         return <AnalyticsPanel />
       default:
         return (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <DashboardOverview culturas={culturasData} tarefas={tarefasData} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+              <div className="xl:col-span-8">
                 <CropManagement compact culturas={culturasData} onCulturaCreated={handleCulturaCreated} />
               </div>
-              <div className="space-y-6">
+              <div className="xl:col-span-4 space-y-5">
                 <WeatherWidget />
                 <TasksPanel compact tarefas={tarefasData} onTarefaCreated={handleTarefaCreated} />
               </div>
@@ -247,12 +250,13 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50">
-      <Sidebar 
-        activeSection={activeSection} 
+    <div className="min-h-screen bg-[#f3f6f5]">
+      <Sidebar
+        activeSection={activeSection}
         setActiveSection={setActiveSection}
         isOpen={sidebarOpen}
         setIsOpen={setSidebarOpen}
+        culturas={culturas}
       />
       
       <div className="lg:pl-72 transition-all duration-300">
@@ -260,8 +264,10 @@ export default function Home() {
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         />
         
-        <main className="p-4 md:p-6 lg:p-8">
-          {renderContent()}
+        <main className="p-4 md:p-6 lg:p-7">
+          <div className="mx-auto w-full max-w-[1540px]">
+            {renderContent()}
+          </div>
         </main>
       </div>
     </div>

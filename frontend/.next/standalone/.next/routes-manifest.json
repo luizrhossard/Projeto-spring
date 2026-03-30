@@ -48,6 +48,12 @@
       "namedRegex": "^/api(?:/)?$"
     },
     {
+      "page": "/insumos",
+      "regex": "^/insumos(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/insumos(?:/)?$"
+    },
+    {
       "page": "/login",
       "regex": "^/login(?:/)?$",
       "routeKeys": {},

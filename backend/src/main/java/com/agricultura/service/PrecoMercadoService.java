@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,9 @@ public class PrecoMercadoService {
 
     private final PrecoMercadoRepository precoMercadoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final NotificacaoService notificacaoService;
+    
+    private static final double LIMITE_VARIACAO = 5.0;
 
     @Transactional(readOnly = true)
     public List<PrecoMercadoResponse> findAll(Long userId) {
@@ -66,6 +70,8 @@ public class PrecoMercadoService {
             throw new RuntimeException("Acesso negado a este preço");
         }
         
+        BigDecimal precoAnterior = preco.getPreco();
+        
         preco.setProduto(request.getProduto());
         preco.setPreco(request.getPreco());
         if (request.getUnidade() != null) {
@@ -74,6 +80,29 @@ public class PrecoMercadoService {
         preco.setVariacao(request.getVariacao());
         
         preco = precoMercadoRepository.save(preco);
+        
+        BigDecimal precoAtual = request.getPreco();
+        if (precoAnterior.compareTo(BigDecimal.ZERO) > 0 && precoAtual.compareTo(precoAnterior) != 0) {
+            BigDecimal variacaoPercentual = precoAtual.subtract(precoAnterior)
+                .divide(precoAnterior, 4, java.math.RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+            
+            if (variacaoPercentual.compareTo(BigDecimal.valueOf(LIMITE_VARIACAO)) > 0) {
+                notificacaoService.criarNotificacao(
+                    userId,
+                    preco.getProduto() + " subiu!",
+                    String.format("%.1f%% de aumento", variacaoPercentual),
+                    "SUCESSO"
+                );
+            } else if (variacaoPercentual.compareTo(BigDecimal.valueOf(-LIMITE_VARIACAO)) < 0) {
+                notificacaoService.criarNotificacao(
+                    userId,
+                    preco.getProduto() + " caiu",
+                    String.format("%.1f%% de queda", variacaoPercentual.abs()),
+                    "ALERTA"
+                );
+            }
+        }
         
         return toResponse(preco);
     }
