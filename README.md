@@ -57,16 +57,16 @@ A aplicação estará disponível em:
 - **Backend**: http://localhost:8080
 - **Banco de Dados**: localhost:5432
 
-### ⚠️ Credenciais de Teste (Apenas Desenvolvimento)
+### ⚠️ Credenciais de Teste (Dev Only)
 
-> **⛔ NÃO USE EM PRODUÇÃO!** Estas credenciais são exclusivamente para testes locais durante o desenvolvimento.
+> **⛔ NÃO USE EM PRODUÇÃO!** Estas credenciais são **DEV ONLY** (exclusivamente para testes locais durante o desenvolvimento).
 
-| Usuário | Email | Senha |
+| Usuário | Email (Dev Only) | Senha (Dev Only) |
 |---------|-------|-------|
 | Admin | admin@agricultura.com | admin123 |
 | Usuário | usuario@agricultura.com | user123 |
 
-Use estas credenciais para entrar na tela de login.
+Use estas credenciais para entrar na tela de login no ambiente de desenvolvimento local.
 
 > **🔒 Para produção:** Crie credenciais fortes e armazene-as em variáveis de ambiente ou um cofre de segredos (ex: AWS Secrets Manager, HashiCorp Vault).
 
