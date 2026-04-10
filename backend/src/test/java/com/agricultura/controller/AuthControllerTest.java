@@ -51,7 +51,7 @@ class AuthControllerTest {
         RegisterRequest request = new RegisterRequest();
         request.setName("Test User");
         request.setEmail("test@example.com");
-        request.setPassword("password123");
+        request.setPassword("Password123!");
 
         AuthResponse authResponse = AuthResponse.builder()
                 .token("jwtToken")
@@ -116,7 +116,7 @@ class AuthControllerTest {
     void register_ValidationError_MissingName() throws Exception {
         RegisterRequest request = new RegisterRequest();
         request.setEmail("test@example.com");
-        request.setPassword("password123");
+        request.setPassword("Password123!");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

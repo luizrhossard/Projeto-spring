@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.agricultura.domain.StatusCultura;
-import com.agricultura.domain.Usuario;
 import com.agricultura.dto.CulturaRequest;
 import com.agricultura.dto.CulturaResponse;
 import com.agricultura.security.JwtAuthenticationFilter;
@@ -51,20 +50,10 @@ class CulturaControllerTest {
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @MockBean
-    private com.agricultura.domain.Usuario usuario;
-
-    private Usuario usuarioEntity;
     private CulturaResponse culturaResponse;
 
     @BeforeEach
     void setUp() {
-        usuarioEntity = Usuario.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-
         culturaResponse = CulturaResponse.builder()
                 .id(1L)
                 .nome("Milho")
@@ -79,7 +68,7 @@ class CulturaControllerTest {
     void findAll_Success() throws Exception {
         when(culturaService.findAll(1L)).thenReturn(List.of(culturaResponse));
 
-        when(authService.getCurrentUser()).thenReturn(usuarioEntity);
+        when(authService.getCurrentUserId()).thenReturn(1L);
 
         mockMvc.perform(get("/api/culturas"))
                 .andExpect(status().isOk())
@@ -90,7 +79,7 @@ class CulturaControllerTest {
     void findById_Success() throws Exception {
         when(culturaService.findById(1L, 1L)).thenReturn(culturaResponse);
 
-        when(authService.getCurrentUser()).thenReturn(usuarioEntity);
+        when(authService.getCurrentUserId()).thenReturn(1L);
 
         mockMvc.perform(get("/api/culturas/1"))
                 .andExpect(status().isOk())
@@ -106,7 +95,7 @@ class CulturaControllerTest {
 
         when(culturaService.create(any(CulturaRequest.class), eq(1L))).thenReturn(culturaResponse);
 
-        when(authService.getCurrentUser()).thenReturn(usuarioEntity);
+        when(authService.getCurrentUserId()).thenReturn(1L);
 
         mockMvc.perform(post("/api/culturas")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +112,7 @@ class CulturaControllerTest {
 
         when(culturaService.update(eq(1L), any(CulturaRequest.class), eq(1L))).thenReturn(culturaResponse);
 
-        when(authService.getCurrentUser()).thenReturn(usuarioEntity);
+        when(authService.getCurrentUserId()).thenReturn(1L);
 
         mockMvc.perform(put("/api/culturas/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,7 +122,7 @@ class CulturaControllerTest {
 
     @Test
     void delete_Success() throws Exception {
-        when(authService.getCurrentUser()).thenReturn(usuarioEntity);
+        when(authService.getCurrentUserId()).thenReturn(1L);
 
         mockMvc.perform(delete("/api/culturas/1")).andExpect(status().isNoContent());
     }
