@@ -1,5 +1,7 @@
 package com.agricultura.dto;
 
+import com.agricultura.domain.StatusCultura;
+
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +16,7 @@ public class CulturaRequest {
 
     @NotNull(message = "A área é obrigatória") @Positive(message = "A área deve ser um valor positivo") private Double area;
 
-    private String status;
+    private StatusCultura status;
 
     @NotNull(message = "A data de plantio é obrigatória") private LocalDate dataPlantio;
 

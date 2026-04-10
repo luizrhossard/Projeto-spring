@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.agricultura.domain.Usuario;
+import com.agricultura.domain.StatusCultura;
 import com.agricultura.dto.CulturaRequest;
 import com.agricultura.dto.CulturaResponse;
 import com.agricultura.security.JwtAuthenticationFilter;
@@ -70,7 +71,7 @@ class CulturaControllerTest {
                 .id(1L)
                 .nome("Milho")
                 .area(new BigDecimal("10.5"))
-                .status("PLANTADO")
+                .status(StatusCultura.PLANTADO)
                 .dataPlantio(LocalDate.now())
                 .userId(1L)
                 .build();

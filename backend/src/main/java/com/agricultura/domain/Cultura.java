@@ -10,7 +10,6 @@ import lombok.*;
 @Entity
 @Table(name = "cultura")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,15 +19,20 @@ public class Cultura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Column(nullable = false, length = 255)
     private String nome;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal area;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     @Builder.Default
-    private String status = "PLANTADO";
+    private StatusCultura status = StatusCultura.PLANTADO;
 
     @Column(name = "data_plantio", nullable = false)
     private LocalDate dataPlantio;
@@ -62,5 +66,16 @@ public class Cultura {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // Método encapsulado para DDD
+    public void atualizarDados(String nome, BigDecimal area, StatusCultura status, LocalDate dataPlantio, LocalDate previsaoColheita, String icone, Integer progress) {
+        if (nome != null) this.nome = nome;
+        if (area != null) this.area = area;
+        if (status != null) this.status = status;
+        if (dataPlantio != null) this.dataPlantio = dataPlantio;
+        this.previsaoColheita = previsaoColheita; // Pode ser null
+        if (icone != null) this.icone = icone;
+        if (progress != null) this.progress = progress;
     }
 }

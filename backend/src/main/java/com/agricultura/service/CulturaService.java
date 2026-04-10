@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.access.AccessDeniedException;
+
+import com.agricultura.domain.StatusCultura;
+import com.agricultura.exception.ResourceNotFoundException;
 import com.agricultura.domain.Cultura;
 import com.agricultura.domain.Usuario;
 import com.agricultura.dto.CulturaRequest;
@@ -32,10 +36,10 @@ public class CulturaService {
     @Transactional(readOnly = true)
     public CulturaResponse findById(Long id, Long userId) {
         Cultura cultura =
-                culturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
+                culturaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cultura não encontrada"));
 
         if (!cultura.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Acesso negado a esta cultura");
+            throw new AccessDeniedException("Acesso negado a esta cultura");
         }
 
         return toResponse(cultura);
@@ -43,13 +47,12 @@ public class CulturaService {
 
     @Transactional
     public CulturaResponse create(CulturaRequest request, Long userId) {
-        Usuario usuario =
-                usuarioRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.getReferenceById(userId);
 
         Cultura cultura = Cultura.builder()
                 .nome(request.getNome())
                 .area(java.math.BigDecimal.valueOf(request.getArea()))
-                .status(request.getStatus() != null ? request.getStatus() : "PLANTADO")
+                .status(request.getStatus() != null ? request.getStatus() : StatusCultura.PLANTADO)
                 .dataPlantio(request.getDataPlantio())
                 .previsaoColheita(request.getPrevisaoColheita())
                 .icone(request.getIcone())
@@ -65,25 +68,21 @@ public class CulturaService {
     @Transactional
     public CulturaResponse update(Long id, CulturaRequest request, Long userId) {
         Cultura cultura =
-                culturaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cultura não encontrada"));
+                culturaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cultura não encontrada"));
 
         if (!cultura.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Acesso negado a esta cultura");
+            throw new AccessDeniedException("Acesso negado a esta cultura");
         }
 
-        cultura.setNome(request.getNome());
-        cultura.setArea(java.math.BigDecimal.valueOf(request.getArea()));
-        if (request.getStatus() != null) {
-            cultura.setStatus(request.getStatus());
-        }
-        cultura.setDataPlantio(request.getDataPlantio());
-        cultura.setPrevisaoColheita(request.getPrevisaoColheita());
-        if (request.getIcone() != null) {
-            cultura.setIcone(request.getIcone());
-        }
-        if (request.getProgress() != null) {
-            cultura.setProgress(request.getProgress());
-        }
+        cultura.atualizarDados(
+            request.getNome(),
+            java.math.BigDecimal.valueOf(request.getArea()),
+            request.getStatus(),
+            request.getDataPlantio(),
+            request.getPrevisaoColheita(),
+            request.getIcone(),
+            request.getProgress()
+        );
 
         cultura = culturaRepository.save(cultura);
 

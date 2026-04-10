@@ -6,6 +6,10 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import com.agricultura.domain.StatusCultura;
+import com.agricultura.exception.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +54,7 @@ class CulturaServiceTest {
                 .id(1L)
                 .nome("Milho")
                 .area(new BigDecimal("10.5"))
-                .status("PLANTADO")
+                .status(StatusCultura.PLANTADO)
                 .dataPlantio(LocalDate.now())
                 .user(usuario)
                 .build();
@@ -81,14 +85,14 @@ class CulturaServiceTest {
     void findById_NotFound_ThrowsException() {
         when(culturaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> culturaService.findById(1L, 1L));
+        assertThrows(ResourceNotFoundException.class, () -> culturaService.findById(1L, 1L));
     }
 
     @Test
     void findById_AccessDenied_ThrowsException() {
         when(culturaRepository.findById(1L)).thenReturn(Optional.of(cultura));
 
-        assertThrows(RuntimeException.class, () -> culturaService.findById(1L, 999L));
+        assertThrows(AccessDeniedException.class, () -> culturaService.findById(1L, 999L));
     }
 
     @Test
@@ -98,7 +102,7 @@ class CulturaServiceTest {
         request.setArea(20.0);
         request.setDataPlantio(LocalDate.now());
 
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.getReferenceById(1L)).thenReturn(usuario);
         when(culturaRepository.save(any(Cultura.class))).thenAnswer(invocation -> {
             Cultura c = invocation.getArgument(0);
             c.setId(2L);
@@ -119,8 +123,8 @@ class CulturaServiceTest {
         request.setArea(20.0);
         request.setDataPlantio(LocalDate.now());
 
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+        when(usuarioRepository.getReferenceById(1L)).thenThrow(new jakarta.persistence.EntityNotFoundException("Usuário não encontrado"));
 
-        assertThrows(RuntimeException.class, () -> culturaService.create(request, 1L));
+        assertThrows(jakarta.persistence.EntityNotFoundException.class, () -> culturaService.create(request, 1L));
     }
 }

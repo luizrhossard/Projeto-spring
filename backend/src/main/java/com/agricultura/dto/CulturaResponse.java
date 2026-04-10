@@ -1,5 +1,7 @@
 package com.agricultura.dto;
 
+import com.agricultura.domain.StatusCultura;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +19,7 @@ public class CulturaResponse {
     private Long id;
     private String nome;
     private BigDecimal area;
-    private String status;
+    private StatusCultura status;
     private LocalDate dataPlantio;
     private LocalDate previsaoColheita;
     private String icone;

@@ -88,7 +88,7 @@ public class DashboardService {
                     // Estimativa baseada no progresso e status
                     int progresso = cultura.getProgress() != null ? cultura.getProgress() : 50;
                     String status =
-                            cultura.getStatus() != null ? cultura.getStatus().toLowerCase() : "";
+                            cultura.getStatus() != null ? cultura.getStatus().name().toLowerCase() : "";
 
                     // Fator de produtividade baseado no status
                     BigDecimal fator = BigDecimal.valueOf(1.0);
@@ -144,7 +144,7 @@ public class DashboardService {
         // Área colhida (culturas finalizadas)
         metricas.areaColhida = culturas.stream()
                 .filter(c -> {
-                    String status = c.getStatus() != null ? c.getStatus().toLowerCase() : "";
+                    String status = c.getStatus() != null ? c.getStatus().name().toLowerCase() : "";
                     return status.contains("finalizada") || status.contains("colheita");
                 })
                 .map(CulturaResponse::getArea)
@@ -181,7 +181,7 @@ public class DashboardService {
 
         // Adicionar atividades baseadas nas culturas
         culturas.forEach(cultura -> {
-            String tipoAtividade = getTipoAtividade(cultura.getStatus());
+            String tipoAtividade = getTipoAtividade(cultura.getStatus() != null ? cultura.getStatus().name() : null);
             String iconeTipo = getIconePorTipoAtividade("CULTURA", tipoAtividade);
             String corFundo = getCorFundoPorTipo(iconeTipo);
 
@@ -197,7 +197,7 @@ public class DashboardService {
                                     : LocalDate.now().format(formatter))
                     .icone(iconeTipo)
                     .corFundo(corFundo)
-                    .status(cultura.getStatus())
+                    .status(cultura.getStatus() != null ? cultura.getStatus().name() : null)
                     .build());
         });
 
