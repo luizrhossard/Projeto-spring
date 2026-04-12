@@ -55,6 +55,7 @@ import {
 } from './crop-icons'
 import { Card3D, Progress3D } from './animations'
 import api, { CulturaRequest } from '@/lib/api'
+import { formatDate } from '@/lib/utils'
 
 interface CropData {
   id: number
@@ -64,7 +65,7 @@ interface CropData {
   status: 'planted' | 'growing' | 'harvest'
   progress: number
   plantedDate: string
-  harvestDate: string
+  harvestDate: string | null
   health: 'excellent' | 'good' | 'warning' | 'critical'
   irrigation: string
   color: string
@@ -209,6 +210,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
     nome: '',
     area: 0,
     dataPlantio: new Date().toISOString().split('T')[0],
+    previsaoColheita: '',
     icone: 'soja',
     progress: 0
   })
@@ -263,7 +265,7 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
       setErrorMessage(null)
       await api.culturas.create(novaCultura)
       setIsDialogOpen(false)
-      setNovaCultura({ nome: '', area: 0, dataPlantio: new Date().toISOString().split('T')[0], icone: 'soja', progress: 0 })
+      setNovaCultura({ nome: '', area: 0, dataPlantio: new Date().toISOString().split('T')[0], previsaoColheita: '', icone: 'soja', progress: 0 })
       onCulturaCreated?.()
     } catch (error: any) {
       console.error('Erro ao criar cultura:', error)
@@ -355,6 +357,15 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                 />
               </div>
               <div className="grid gap-2">
+                <label htmlFor="previsaoColheita" className="text-sm font-medium">Previsão de Colheita</label>
+                <Input
+                  id="previsaoColheita"
+                  type="date"
+                  value={novaCultura.previsaoColheita || ''}
+                  onChange={(e) => setNovaCultura({ ...novaCultura, previsaoColheita: e.target.value || undefined })}
+                />
+              </div>
+              <div className="grid gap-2">
                 <label className="text-sm font-medium">Progresso Inicial: {novaCultura.progress || 0}%</label>
                 <input
                   type="range"
@@ -440,6 +451,14 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                     type="date"
                     value={editedCultura.dataPlantio}
                     onChange={(e) => setEditedCultura({ ...editedCultura, dataPlantio: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Previsão de Colheita</label>
+                  <Input
+                    type="date"
+                    value={editedCultura.previsaoColheita || ''}
+                    onChange={(e) => setEditedCultura({ ...editedCultura, previsaoColheita: e.target.value || undefined })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -594,30 +613,32 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => {
-                                  setSelectedCrop(crop)
-                                  setEditedCultura({
-                                    nome: crop.name,
-                                    area: parseFloat(crop.area.replace(' ha', '')),
-                                    dataPlantio: crop.plantedDate,
-                                    icone: crop.icone,
-                                    progress: crop.progress
-                                  })
-                                  setIsEditDialogOpen(true)
-                                }}>
-                                  Editar Cultura
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-                                  setSelectedCrop(crop)
-                                  setEditedCultura({
-                                    nome: crop.name,
-                                    area: parseFloat(crop.area.replace(' ha', '')),
-                                    dataPlantio: crop.plantedDate,
-                                    icone: crop.icone,
-                                    progress: crop.progress
-                                  })
-                                  setIsEditDialogOpen(true)
-                                }}>
-                                  Atualizar Progresso
+                                   setSelectedCrop(crop)
+                                   setEditedCultura({
+                                     nome: crop.name,
+                                     area: parseFloat(crop.area.replace(' ha', '')),
+                                     dataPlantio: crop.plantedDate,
+                                     previsaoColheita: crop.harvestDate || undefined,
+                                     icone: crop.icone,
+                                     progress: crop.progress
+                                   })
+                                   setIsEditDialogOpen(true)
+                                 }}>
+                                   Editar Cultura
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => {
+                                   setSelectedCrop(crop)
+                                   setEditedCultura({
+                                     nome: crop.name,
+                                     area: parseFloat(crop.area.replace(' ha', '')),
+                                     dataPlantio: crop.plantedDate,
+                                     previsaoColheita: crop.harvestDate || undefined,
+                                     icone: crop.icone,
+                                     progress: crop.progress
+                                   })
+                                   setIsEditDialogOpen(true)
+                                 }}>
+                                   Atualizar Progresso
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="text-red-600" onClick={async () => {
                                   if (confirm(`Tem certeza que deseja excluir "${crop.name}"?`)) {
@@ -702,14 +723,14 @@ export function CropManagement({ compact = false, culturas, onCulturaCreated }: 
 
                           {/* Dates */}
                           <div className="flex justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>Plantio: {new Date(crop.plantedDate).toLocaleDateString('pt-BR')}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>Colheita: {new Date(crop.harvestDate).toLocaleDateString('pt-BR')}</span>
-                            </div>
+                          <div className="flex items-center gap-1">
+                               <Calendar className="w-3 h-3" />
+                               <span>Plantio: {formatDate(crop.plantedDate, 'N/A')}</span>
+                             </div>
+                             <div className="flex items-center gap-1">
+                               <Clock className="w-3 h-3" />
+                               <span>Colheita: {formatDate(crop.harvestDate)}</span>
+                             </div>
                           </div>
                         </div>
                       </CardContent>

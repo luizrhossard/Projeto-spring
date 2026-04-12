@@ -42,13 +42,13 @@ export function useAgriculturalWeather(latitude: number = -23.5505, longitude: n
         const data = await response.json()
 
         const currentWeather: WeatherData = {
-          temperature: data.current.temperature_2m,
-          humidity: data.current.relative_humidity_2m,
-          windSpeed: data.current.wind_speed_10m,
+          temperature: Math.round((data.current.temperature_2m ?? 0) * 10) / 10,
+          humidity: Math.round(data.current.relative_humidity_2m ?? 0),
+          windSpeed: Math.round((data.current.wind_speed_10m ?? 0) * 10) / 10,
           condition: getWeatherCondition(data.current.weather_code),
-          conditionCode: data.current.weather_code,
-          uvIndex: data.daily.uv_index_max[0],
-          precipitation: data.current.precipitation || 0
+          conditionCode: data.current.weather_code ?? 0,
+          uvIndex: Math.round((data.daily.uv_index_max?.[0] ?? 0) * 10) / 10,
+          precipitation: Math.round((data.current.precipitation ?? 0) * 10) / 10
         }
 
         setWeather(currentWeather)

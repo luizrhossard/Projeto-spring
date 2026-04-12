@@ -22,7 +22,7 @@ interface CropData {
   status: 'planted' | 'growing' | 'harvest'
   progress: number
   plantedDate: string
-  harvestDate: string
+  harvestDate: string | null
   health: 'excellent' | 'good' | 'warning' | 'critical'
   irrigation: string
   color: string
@@ -76,7 +76,7 @@ const mapCulturaToCropData = (cultura: CulturaResponse): CropData => {
     status: statusMap[cultura.status] || 'growing',
     progress: cultura.progress ?? 0,
     plantedDate: cultura.dataPlantio,
-    harvestDate: cultura.previsaoColheita || '',
+    harvestDate: cultura.previsaoColheita ?? null,
     health: 'good',
     irrigation: 'Automática',
     color: healthMap.good,

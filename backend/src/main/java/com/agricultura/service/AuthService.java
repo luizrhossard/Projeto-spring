@@ -62,12 +62,11 @@ public class AuthService {
         if (loginAttemptService.isBlocked(email)) {
             long remainingMinutes = loginAttemptService.getRemainingLockMinutes(email);
             throw new BusinessException(
-                "Conta temporariamente bloqueada. Tente novamente em " + remainingMinutes + " minutos.");
+                    "Conta temporariamente bloqueada. Tente novamente em " + remainingMinutes + " minutos.");
         }
 
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.getPassword()));
 
             loginAttemptService.loginSucceeded(email);
 

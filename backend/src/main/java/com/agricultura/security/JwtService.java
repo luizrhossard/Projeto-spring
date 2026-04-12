@@ -5,7 +5,6 @@ import com.agricultura.repository.UsuarioRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +47,9 @@ public class JwtService implements UserDetailsService {
                 .claims(extraClaims)
                 .subject(usuario.getEmail())
                 .issuer(jwtIssuer)
-                .audience().add("agricultura-app").and()
+                .audience()
+                .add("agricultura-app")
+                .and()
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
@@ -106,13 +107,15 @@ public class JwtService implements UserDetailsService {
             byte[] decoded = Decoders.BASE64.decode(secret);
             if (decoded.length < 32) {
                 throw new IllegalArgumentException(
-                    "JWT secret must be at least 256 bits (32 bytes) when base64 decoded, got " + decoded.length + " bytes");
+                        "JWT secret must be at least 256 bits (32 bytes) when base64 decoded, got " + decoded.length
+                                + " bytes");
             }
             return decoded;
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException(
-                "JWT secret must be a valid Base64-encoded string with at least 256 bits. " +
-                "Generate one with: openssl rand -base64 32", ex);
+                    "JWT secret must be a valid Base64-encoded string with at least 256 bits. "
+                            + "Generate one with: openssl rand -base64 32",
+                    ex);
         }
     }
 
@@ -122,10 +125,6 @@ public class JwtService implements UserDetailsService {
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        return new CustomUserDetails(
-                usuario.getId(),
-                usuario.getEmail(),
-                usuario.getPassword(),
-                usuario.getRole());
+        return new CustomUserDetails(usuario.getId(), usuario.getEmail(), usuario.getPassword(), usuario.getRole());
     }
 }

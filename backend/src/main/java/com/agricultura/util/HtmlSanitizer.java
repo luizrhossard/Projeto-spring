@@ -4,8 +4,7 @@ import org.springframework.web.util.HtmlUtils;
 
 public class HtmlSanitizer {
 
-    private HtmlSanitizer() {
-    }
+    private HtmlSanitizer() {}
 
     public static String sanitize(String input) {
         if (input == null) {

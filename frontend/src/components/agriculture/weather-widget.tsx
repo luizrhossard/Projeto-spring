@@ -30,11 +30,11 @@ export function WeatherWidget() {
   const { weather, insights, isLoading, error } = useAgriculturalWeather()
 
   const forecast = [
-    { day: 'Hoje', icon: weather?.condition || 'sun', temp: weather?.temperature || 28, rain: Math.min(Math.round((weather?.precipitation || 0) * 10), 100) },
-    { day: 'Amanha', icon: 'cloud', temp: (weather?.temperature || 28) - 2, rain: 20 },
-    { day: 'Qua', icon: 'rain', temp: (weather?.temperature || 28) - 4, rain: 60 },
-    { day: 'Qui', icon: 'cloud', temp: (weather?.temperature || 28) - 1, rain: 30 },
-    { day: 'Sex', icon: 'sun', temp: (weather?.temperature || 28) + 1, rain: 10 },
+    { day: 'Hoje', icon: weather?.condition || 'sun', temp: Math.round(weather?.temperature ?? 28), rain: Math.min(Math.round((weather?.precipitation ?? 0) * 10), 100) },
+    { day: 'Amanha', icon: 'cloud', temp: Math.round((weather?.temperature ?? 28) - 2), rain: 20 },
+    { day: 'Qua', icon: 'rain', temp: Math.round((weather?.temperature ?? 28) - 4), rain: 60 },
+    { day: 'Qui', icon: 'cloud', temp: Math.round((weather?.temperature ?? 28) - 1), rain: 30 },
+    { day: 'Sex', icon: 'sun', temp: Math.round((weather?.temperature ?? 28) + 1), rain: 10 },
   ]
 
   if (isLoading) {
@@ -89,7 +89,7 @@ export function WeatherWidget() {
       <CardContent className="space-y-3.5">
         <div className="flex items-center justify-between p-4 bg-[#f5f9f6] border border-[#e2ece5] rounded-lg">
           <div>
-            <p className="text-3xl font-semibold text-slate-800">{weather.temperature}°C</p>
+            <p className="text-3xl font-semibold text-slate-800">{Math.round(weather.temperature)}°C</p>
             <p className="text-sm text-slate-600">{weather.condition}</p>
             <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
               <MapPin className="w-3 h-3" />
@@ -104,8 +104,8 @@ export function WeatherWidget() {
         <div className="grid grid-cols-3 gap-2.5">
           {[
             { icon: Droplets, value: `${weather.humidity}%`, label: 'Umidade', color: 'bg-sky-50 text-sky-500' },
-            { icon: Wind, value: `${weather.windSpeed}km/h`, label: 'Vento', color: 'bg-gray-50 text-gray-500' },
-            { icon: Thermometer, value: weather.uvIndex, label: 'UV', color: 'bg-orange-50 text-orange-500' }
+            { icon: Wind, value: `${weather.windSpeed} km/h`, label: 'Vento', color: 'bg-gray-50 text-gray-500' },
+            { icon: Thermometer, value: weather.uvIndex?.toFixed(1) ?? '—', label: 'UV', color: 'bg-orange-50 text-orange-500' }
           ].map((item) => {
             const Icon = item.icon
             return (

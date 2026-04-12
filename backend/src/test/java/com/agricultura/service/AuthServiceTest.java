@@ -161,10 +161,11 @@ class AuthServiceTest {
 
     @Test
     void getCurrentUser_ReturnsCurrentUser() {
-        CustomUserDetails customUserDetails = new CustomUserDetails(
-                usuario.getId(), usuario.getEmail(), usuario.getPassword(), usuario.getRole());
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customUserDetails, null, Collections.emptyList()));
+        CustomUserDetails customUserDetails =
+                new CustomUserDetails(usuario.getId(), usuario.getEmail(), usuario.getPassword(), usuario.getRole());
+        SecurityContextHolder.getContext()
+                .setAuthentication(
+                        new UsernamePasswordAuthenticationToken(customUserDetails, null, Collections.emptyList()));
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
 
@@ -177,10 +178,11 @@ class AuthServiceTest {
 
     @Test
     void getCurrentUserId_ExtractsFromSecurityContext() {
-        CustomUserDetails customUserDetails = new CustomUserDetails(
-                usuario.getId(), usuario.getEmail(), usuario.getPassword(), usuario.getRole());
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customUserDetails, null, Collections.emptyList()));
+        CustomUserDetails customUserDetails =
+                new CustomUserDetails(usuario.getId(), usuario.getEmail(), usuario.getPassword(), usuario.getRole());
+        SecurityContextHolder.getContext()
+                .setAuthentication(
+                        new UsernamePasswordAuthenticationToken(customUserDetails, null, Collections.emptyList()));
 
         Long userId = authService.getCurrentUserId();
 

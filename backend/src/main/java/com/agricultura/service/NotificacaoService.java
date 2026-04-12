@@ -36,7 +36,8 @@ public class NotificacaoService {
 
     @Transactional
     public void criarNotificacao(Long usuarioId, String titulo, String mensagem, String tipo) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        Usuario usuario = usuarioRepository
+                .findById(usuarioId)
                 .orElseThrow(() -> new com.agricultura.exception.ResourceNotFoundException("Usuário não encontrado"));
 
         Notificacao notificacao = Notificacao.builder()
