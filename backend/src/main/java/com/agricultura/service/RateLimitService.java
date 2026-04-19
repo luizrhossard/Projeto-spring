@@ -28,7 +28,7 @@ public class RateLimitService {
         }
 
         String key = RATE_LIMIT_KEY_PREFIX + endpoint + ":" + clientId;
-        Long current = redisTemplate.opsForValue().increment(key);
+        Long current = redisTemplate.opsForValue().increment(key, 1L);
 
         if (current != null && current == 1) {
             redisTemplate.expire(key, 1, TimeUnit.MINUTES);
