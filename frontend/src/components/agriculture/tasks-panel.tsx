@@ -219,7 +219,7 @@ const handleCriarTarefa = async () => {
       setIsLoading(true)
       await api.tarefas.create({
         ...novaTarefa,
-        prioridade: priorityMap[novaTarefa.prioridade] || 'MEDIA'
+        prioridade: novaTarefa.prioridade ? (priorityMap[novaTarefa.prioridade] || 'MEDIA') : 'MEDIA'
       })
       setIsDialogOpen(false)
       setNovaTarefa({ titulo: '', descricao: '', prioridade: 'MEDIA', dataVencimento: new Date().toISOString().split('T')[0] })
