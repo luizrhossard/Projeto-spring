@@ -48,7 +48,6 @@ class RateLimitFilterTest {
     @Test
     void doFilter_Disabled_PassesThrough() throws Exception {
         ReflectionTestUtils.setField(rateLimitFilter, "enabled", false);
-        when(request.getRequestURI()).thenReturn("/api/culturas");
 
         rateLimitFilter.doFilterInternal(request, response, filterChain);
 

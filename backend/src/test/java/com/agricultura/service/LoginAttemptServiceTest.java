@@ -43,18 +43,17 @@ class LoginAttemptServiceTest {
 
     @Test
     void loginFailed_FirstAttempt_IncrementsAndSetsExpiry() {
-        when(redisTemplate.increment("auth:attempts:" + EMAIL)).thenReturn(1L);
+        when(valueOperations.increment("auth:attempts:" + EMAIL, 1L)).thenReturn(1L);
 
         loginAttemptService.loginFailed(EMAIL);
 
-        verify(redisTemplate).increment("auth:attempts:" + EMAIL);
+        verify(valueOperations).increment("auth:attempts:" + EMAIL, 1L);
         verify(redisTemplate).expire("auth:attempts:" + EMAIL, 30, TimeUnit.MINUTES);
-        verify(redisTemplate, never()).opsForValue();
     }
 
     @Test
     void loginFailed_ExceedsMaxAttempts_LocksAccount() {
-        when(redisTemplate.increment("auth:attempts:" + EMAIL)).thenReturn(5L);
+        when(valueOperations.increment("auth:attempts:" + EMAIL, 1L)).thenReturn(5L);
         when(valueOperations.setIfAbsent(anyString(), anyString())).thenReturn(true);
 
         loginAttemptService.loginFailed(EMAIL);
@@ -65,7 +64,7 @@ class LoginAttemptServiceTest {
 
     @Test
     void loginFailed_BelowMaxAttempts_DoesNotLock() {
-        when(redisTemplate.increment("auth:attempts:" + EMAIL)).thenReturn(3L);
+        when(valueOperations.increment("auth:attempts:" + EMAIL, 1L)).thenReturn(3L);
 
         loginAttemptService.loginFailed(EMAIL);
 
