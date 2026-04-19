@@ -43,7 +43,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                                "/api/auth/**",
+                                "/api/culturas/**",
+                                "/api/tarefas/**",
+                                "/api/precos/**",
+                                "/api/insumos/**",
+                                "/api/notificacoes/**",
+                                "/api/dashboard/**")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll();
